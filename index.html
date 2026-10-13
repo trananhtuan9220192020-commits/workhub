@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 5.6.1 · Workspace</title>
+<title>WorkHub 5.6.2 · Workspace</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#f5f7f9;--surface:#fff;--ink:#162b32;--muted:#71818b;--line:#e5ecef;--green:#15836c;--deep:#173d37;--pale:#eaf6f1;--red:#b74649;--amber:#b07a32;--shadow:0 7px 28px #21423b0b}
@@ -133,18 +133,88 @@ body[data-theme=dark] #cloudTopStatus.status-ready{background:#16483b;border-col
 body[data-theme=dark] #cloudTopStatus.status-issue{background:#453726;border-color:#68543b;color:#ffe2b8}
 @media(max-width:750px){.topright #cloudTopStatus{max-width:none;min-height:43px;padding:10px 14px;font-size:12px}}
 @media(max-width:420px){.topright #cloudTopStatus{font-size:12px;max-width:none;white-space:normal;text-align:center}}
+
+/* 5.6.2 — Home tối giản; chỉ thay trình bày trang Tổng quan */
+.home-simple{max-width:1270px;margin:0 auto;display:grid;gap:18px}
+.home-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home-metric{appearance:none;display:flex;flex-direction:column;justify-content:space-between;text-align:left;min-height:113px;border:1px solid transparent;border-radius:17px;padding:18px 20px;position:relative;box-shadow:none;overflow:hidden;color:#293558;transition:transform .15s,border-color .15s,box-shadow .15s}
+.home-metric:hover{transform:translateY(-2px);box-shadow:0 10px 22px #2022440d}
+.home-metric-top,.home-metric-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%}
+.home-metric-top>span:first-child{font-size:12px;font-weight:700;line-height:1.4}
+.home-metric-icon{display:grid;place-items:center;flex:none;width:31px;height:31px;border-radius:10px;background:#ffffffb0}
+.home-metric-bottom{margin-top:8px}.home-metric-bottom strong{font-size:30px;line-height:1;font-weight:800;letter-spacing:-1.1px}
+.home-metric-arrow{opacity:.55}
+.home-metric-indigo{background:#ebeaff;border-color:#dedcfc;color:#564dcc}
+.home-metric-amber{background:#fff2de;border-color:#ffe8be;color:#aa711d}
+.home-metric-pink{background:#ffeaf2;border-color:#f8dce7;color:#b44772}
+.home-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.94fr);align-items:start;gap:16px}
+.home-block{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:19px;min-width:0;padding:22px}
+.home-block-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.home-eyebrow{display:block;font-size:9px;font-weight:800;letter-spacing:1.3px;color:#939bbc;margin-bottom:4px}
+.home-block-head h2{font-size:17px;letter-spacing:-.45px;margin:0;color:var(--ink);font-weight:800;line-height:1.4}
+.home-block-head p{font-size:11px;color:var(--muted);margin:4px 0 0}
+.home-all{display:inline-flex;flex-shrink:0;align-items:center;gap:6px;color:#6455df;background:transparent!important;border:0!important;box-shadow:none!important;padding:8px 6px;font-size:11px;font-weight:750}
+.home-all:hover{background:#f3f2ff!important}
+.home-task{min-width:0;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--line);padding:14px 0}
+.home-task:last-child{border-bottom:0;padding-bottom:6px}
+.home-task-mark{flex:none;width:8px;height:8px;border-radius:50%;background:#8671ec;box-shadow:0 0 0 4px #ece9ff}
+.home-task-mark.is-today{background:#e5a340;box-shadow:0 0 0 4px #fff2da}.home-task-mark.is-late{background:#dd627d;box-shadow:0 0 0 4px #ffe8ee}
+.home-task-main{min-width:0;flex:1}.home-task-main b{display:block;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.55;color:var(--ink)}
+.home-task-main small{font-size:10px;color:var(--muted);display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-task-status{flex:none;border-radius:7px;padding:5px 8px;background:#f0f0fc;color:#6557bf;font-size:10px;font-weight:700;white-space:nowrap}
+.home-task-status.is-today{background:#fff2dc;color:#b47725}.home-task-status.is-late{background:#fff0f2;color:#bb4f6b}
+.home-task-edit{display:grid;place-items:center;flex:none;width:33px;height:33px;min-height:33px;padding:5px;color:#6a65a4;background:#f6f6fd;border:1px solid var(--line);border-radius:10px}
+.home-task-empty{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:#8a91ad}
+.home-task-empty svg{color:#34a78b}.home-task-empty strong{color:var(--ink);font-size:13px}.home-task-empty span{font-size:11px}
+.home-tool-list{display:grid;gap:3px}.home-tool{display:flex;align-items:center;text-align:left;gap:12px;width:100%;min-height:67px;padding:11px 4px;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0;background:transparent!important;box-shadow:none!important;color:var(--ink);font-size:12px;font-weight:750}
+.home-tool:last-child{border-bottom:0!important}.home-tool:hover{background:#fafaff!important;padding-left:8px}.home-tool>span:nth-child(2){flex:1;min-width:0}
+.home-tool small{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-top:2px}.home-tool>svg:last-child{color:#a1a8bb;flex:none}
+.home-tool-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;flex:none}
+.tool-blue{background:#eaf0ff;color:#536acb}.tool-mint{background:#e4f7ef;color:#18856e}.tool-pink{background:#ffeaf1;color:#cc567f}
+.home-warning{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:10px 14px;background:#fff7e8;border:1px solid #ffebc7;border-radius:12px;color:#8d5c22;font-size:11px}
+.home-warning>span{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.home-warning button{display:flex;align-items:center;gap:5px;flex:none;font-size:11px;padding:6px 8px;border:0;background:transparent!important;color:inherit;font-weight:750}
+body[data-theme=dark] .home-block{background:var(--surface);border-color:var(--line)}
+body[data-theme=dark] .home-block-head h2,body[data-theme=dark] .home-task-main b{color:var(--ink)}
+body[data-theme=dark] .home-metric-indigo{background:#353264;color:#c5bfff;border-color:#4b4783}
+body[data-theme=dark] .home-metric-amber{background:#4b392a;color:#ffe0a2;border-color:#705336}
+body[data-theme=dark] .home-metric-pink{background:#4c2c45;color:#ffbfd6;border-color:#6e3c59}
+body[data-theme=dark] .home-metric-icon{background:#ffffff14}
+body[data-theme=dark] .home-tool{color:var(--ink);background:transparent!important}body[data-theme=dark] .home-tool:hover{background:#ffffff09!important}
+body[data-theme=dark] .home-task-edit{background:#2d3456;color:#b4b5ff;border-color:#3a4264}
+body[data-theme=dark] .home-task-status{background:#3b335d;color:#c7bcff}
+body[data-theme=dark] .home-task-status.is-late{background:#573246;color:#ffbbcc}body[data-theme=dark] .home-task-status.is-today{background:#51412d;color:#ffe1a4}
+body[data-theme=dark] .home-warning{background:#463726;border-color:#715438;color:#f3d5a4}
+body[data-theme=dark] .home-all:hover{background:#343050!important}
+@media(max-width:1050px){.home-layout{grid-template-columns:1fr}}
+@media(max-width:750px){.home-simple{gap:12px}.home-metrics{gap:8px}.home-metric{min-height:103px;border-radius:13px;padding:13px 11px}.home-metric-top>span:first-child{font-size:10px}.home-metric-icon{width:26px;height:26px}.home-metric-icon svg{width:16px;height:16px}.home-metric-bottom strong{font-size:25px}.home-layout{gap:12px}.home-block{padding:17px 15px;border-radius:15px}.home-block-head h2{font-size:16px}.home-task{gap:8px;padding:12px 0}.home-task-status{font-size:9px;padding:4px 6px}.home-task-main b{font-size:11px}.home-tool{min-height:60px}.topright #quickAdd{display:inline-flex!important;font-size:11px;padding:10px 12px;min-height:42px}.topright{display:flex;flex-wrap:wrap}.home-warning{flex-direction:column;align-items:stretch;gap:4px}.home-warning button{align-self:flex-end}}
+@media(max-width:750px){
+ .home-layout{display:flex;flex-direction:column;gap:12px}
+ .home-tools{order:-1;width:100%}.home-priorities{order:0;width:100%}
+ .home-tool-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .home-tool-list .home-tool{min-height:90px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:7px;padding:10px 5px;border:1px solid #edf0fa!important;border-radius:13px;background:#f7f8ff!important;font-size:10px}
+ .home-tool-list .home-tool:nth-child(2){background:#f0fbf6!important;border-color:#dbf1e8!important}
+ .home-tool-list .home-tool:nth-child(3){background:#fff3f8!important;border-color:#fae3ed!important}
+ .home-tool-list .home-tool span:nth-child(2){flex:none}.home-tool-list .home-tool small{display:none}.home-tool-list .home-tool>svg:last-child{display:none}
+ .home-tool-icon{width:33px;height:33px;border-radius:10px}
+ .home-block-head{margin-bottom:11px}.home-task-empty{min-height:95px}
+ body[data-theme=dark] .home-tool-list .home-tool{background:#282d50!important;border-color:#373d62!important}
+ body[data-theme=dark] .home-tool-list .home-tool:nth-child(2){background:#203b39!important;border-color:#305552!important}
+ body[data-theme=dark] .home-tool-list .home-tool:nth-child(3){background:#402b46!important;border-color:#553955!important}
+}
+@media(max-width:360px){.home-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.home-metric{padding:11px 8px}.home-metric-icon{display:none}.home-metric-top>span:first-child{font-size:9px}.home-task-status:not(.is-late):not(.is-today){display:none}}
+
 </style>
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.6.1</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.6.2</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
   <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB · YOUR DAILY WORKSPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Quản lý công việc kho trong một nơi duy nhất</p></div><div class="topright"><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.6.1 · GitHub Pages · OAuth Google, không lưu mật khẩu và access token trong mã nguồn</div>
+  <div class="footerline">WorkHub 5.6.2 · GitHub Pages · OAuth Google, không lưu mật khẩu và access token trong mã nguồn</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
@@ -155,7 +225,7 @@ body[data-theme=dark] #cloudTopStatus.status-issue{background:#453726;border-col
 const DEFAULT_GOOGLE_CLIENT_ID='329870030414-o0qt93i72dllogp7b20cbj0tt9ce9hjv.apps.googleusercontent.com';
 const DB_NAME='workhub_personal_v51', DB_STORE='kv', KEYS=['tasks','partners','operations','handoffs','issues','mistakes','stock','counts','returns','settings'];
 const MENU=[['dashboard','⌂','Tổng quan'],['tasks','☑','Công việc'],['stock','▦','Tồn kho'],['count','▤','Kiểm kho'],['returns','▣','Hàng hoàn & video'],['mistakes','⚠','Giao sai / PIC'],['reports','◷','Báo cáo'],['settings','⚙','Cài đặt']];
-const titles={dashboard:['Tổng quan','Công việc và công cụ kho trong một nơi'],tasks:['Công việc','Theo dõi nhiệm vụ, tiến độ và người phụ trách'],stock:['Tồn kho Haravan','Tra cứu SKU, mã vạch, size và kho'],count:['Kiểm kho','Quét mã, nhập số lượng và đối chiếu chênh lệch'],returns:['Hàng hoàn & video','Quét mã kiện, ghi hình và lưu video lên Drive'],mistakes:['Giao sai / PIC','Theo dõi loại lỗi, PIC, chi phí phát sinh'],reports:['Báo cáo','Tổng hợp và xuất dữ liệu'],settings:['Cài đặt & sao lưu','Kết nối Google và quản lý bản sao lưu']};
+const titles={dashboard:['Tổng quan','Việc cần xử lý và công cụ thường dùng'],tasks:['Công việc','Theo dõi nhiệm vụ, tiến độ và người phụ trách'],stock:['Tồn kho Haravan','Tra cứu SKU, mã vạch, size và kho'],count:['Kiểm kho','Quét mã, nhập số lượng và đối chiếu chênh lệch'],returns:['Hàng hoàn & video','Quét mã kiện, ghi hình và lưu video lên Drive'],mistakes:['Giao sai / PIC','Theo dõi loại lỗi, PIC, chi phí phát sinh'],reports:['Báo cáo','Tổng hợp và xuất dữ liệu'],settings:['Cài đặt & sao lưu','Kết nối Google và quản lý bản sao lưu']};
 const schema={
  tasks:{label:'công việc',fields:[['title','Tên công việc','text',true],['project','Dự án / nhóm','text'],['owner','Người phụ trách','text'],['status','Trạng thái','select',false,['Chưa làm','Đang làm','Chờ phản hồi','Hoàn thành']],['priority','Ưu tiên','select',false,['Bình thường','Cao','Khẩn']],['due','Hạn hoàn thành','date'],['followup','Ngày nhắc lại','date'],['notes','Ghi chú','textarea']]},
  partners:{label:'đối tác vận chuyển',fields:[['name','Đối tác','text',true],['service','Dịch vụ','text'],['contact','Đầu mối liên hệ / SĐT','text'],['email','Email liên hệ','email'],['channel','Kênh sử dụng','select',false,['Shopee','Website','Quốc tế','Khác']],['status','Tình trạng hợp tác','select',false,['Đang sử dụng','Đang liên hệ','Chờ báo giá','Đang thử nghiệm','Ngưng']],['price','Ghi chú giá cước','text'],['followup','Ngày nhắc lại','date'],['notes','Nội dung trao đổi','textarea']]},
@@ -235,7 +305,44 @@ function renderStorageStatus(){const pending=cloudDirty.size,ready=cloudIsReady(
  else {label='○ Chưa tạo nơi lưu Google';desc='Bạn có thể dùng thử cục bộ. Để lưu lên Sheets/Drive, hãy thực hiện bước thiết lập.'}
  return `<div class="storage-status ${css}"><div><b>${esc(label)}</b><div>${esc(desc)}</div></div><button ${cloudBlocked||ready||!isLinked?'data-page="settings"':'data-action="cloud-connect"'}>${ready?'Kiểm tra kết nối':isLinked&&!cloudBlocked?'Kết nối Google':'Thiết lập ngay'} →</button></div>`
 }
-function renderDashboard(){const active=data.tasks.filter(x=>x.status!=='Hoàn thành'),openMistakes=data.mistakes.filter(x=>x.status!=='Đã xử lý'),overdue=active.filter(x=>x.due&&x.due<today()),soon=active.filter(x=>x.due===today());const nearest=[...active].sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).slice(0,5);const needsAttention=cloudBlocked||cloudDirty.size>0||!cloudIsReady();return `<section class="dashboard-hero"><div class="hero-decor hero-decor-one"></div><div class="hero-decor hero-decor-two"></div><div class="dashboard-hero-main"><div class="hero-date">${whIcon('check',16)} KHÔNG GIAN CỦA BẠN · ${esc(uiDate())}</div><h2>Chào ${esc(data.settings.name||'bạn')} <span class="wave">✦</span><br>Hôm nay mình làm gì?</h2><p>Mọi công việc và thao tác kho, trong một nơi thật gọn gàng.</p><button type="button" class="hero-cta" data-action="add" data-kind="tasks">${whIcon('plus',18)} Tạo công việc mới ${whIcon('arrow',16)}</button></div><div class="hero-insight"><div class="insight-icon">${whIcon('tasks',27)}</div><strong>${number(active.length)}</strong><span>công việc đang theo dõi</span><div class="insight-divider"></div><span><b>${number(soon.length)}</b> đến hạn hôm nay</span></div></section><div class="section-title-row"><div><div class="section-kicker">THAO TÁC HẰNG NGÀY</div><h2>Truy cập nhanh</h2></div><span class="note">Chọn việc bạn cần</span></div><div class="quick-grid">${quickButton('plus','Thêm công việc','Tạo và phân công','add','tasks')}${quickButton('scan','Tra cứu tồn','SKU · Barcode · Size','stock')}${quickButton('returns','Hàng hoàn','Quét và quay video','returns')}${quickButton('count','Kiểm kho','Ghi nhận số thực tế','count')}</div>${needsAttention?renderStorageStatus():''}<div class="section-title-row stats-title"><div><div class="section-kicker">TÌNH HÌNH HIỆN TẠI</div><h2>Tổng quan công việc</h2></div></div><div class="cards">${metric('Việc đang làm',active.length,'Đang theo dõi')}${metric('Quá hạn',overdue.length,'Cần ưu tiên')}${metric('Đến hạn hôm nay',soon.length,'Trong ngày')}${metric('Giao sai chưa xử lý',openMistakes.length,'Chờ giải quyết')}</div><div class="split dashboard-panels"><section class="panel"><div class="panel-head"><div><span class="panel-eyebrow">THEO DÕI</span><h2>Việc cần ưu tiên</h2></div><button class="small text-link" data-page="tasks">Tất cả ${whIcon('arrow',15)}</button></div>${nearest.length?nearest.map(t=>`<div class="row-card priority-row"><div class="priority-dot"></div><div class="priority-content"><b>${esc(t.title)}</b><p>${esc(t.project||'Chưa phân nhóm')} · ${esc(t.owner||'Chưa phân PIC')} · ${t.due?'Hạn '+viDate(t.due):'Chưa có hạn'}</p></div><button class="small icon-only" data-action="edit" data-kind="tasks" data-id="${esc(t.id)}" aria-label="Mở công việc">${whIcon('arrow',18)}</button></div>`).join(''):`<div class="empty"><b>Không có công việc cần xử lý</b>Bạn có thể tạo công việc đầu tiên ngay hôm nay.<div class="empty-action"><button class="primary" data-action="add" data-kind="tasks">${whIcon('plus',17)} Thêm công việc</button></div></div>`}</section><section class="panel warehouse-panel"><div class="panel-head"><div><span class="panel-eyebrow">HOẠT ĐỘNG KHO</span><h2>Lối tắt nghiệp vụ</h2></div></div><div class="warehouse-links"><button class="warehouse-link" data-page="stock"><span class="warehouse-link-icon blue">${whIcon('stock',20)}</span><span><b>Tồn kho Haravan</b><small>${number(data.stock.length)} biến thể hàng hóa</small></span>${whIcon('arrow',17)}</button><button class="warehouse-link" data-page="count"><span class="warehouse-link-icon violet">${whIcon('count',20)}</span><span><b>Kiểm kho</b><small>${data.counts.filter(x=>!x.meta).length} lượt kiểm đã ghi nhận</small></span>${whIcon('arrow',17)}</button><button class="warehouse-link" data-page="returns"><span class="warehouse-link-icon rose">${whIcon('returns',20)}</span><span><b>Hàng hoàn & video</b><small>${data.returns.length} lượt xử lý</small></span>${whIcon('arrow',17)}</button><button class="warehouse-link" data-page="mistakes"><span class="warehouse-link-icon sun">${whIcon('mistakes',20)}</span><span><b>Giao sai / PIC</b><small>${cash(data.mistakes.reduce((acc,x)=>acc+costOf(x),0))} chi phí</small></span>${whIcon('arrow',17)}</button></div></section></div>`}
+function renderDashboard(){
+  const current=today();
+  const active=data.tasks.filter(t=>t.status!=='Hoàn thành');
+  const overdue=active.filter(t=>t.due&&t.due<current);
+  const dueToday=active.filter(t=>t.due===current);
+  const mistakes=data.mistakes.filter(m=>m.status!=='Đã xử lý');
+  const sortUrgency=t=>t.due&&t.due<current?0:t.due===current?1:t.priority==='Khẩn'?2:t.priority==='Cao'?3:t.due?4:5;
+  const tasks=[...active].sort((a,b)=>sortUrgency(a)-sortUrgency(b)||(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')).slice(0,5);
+  const compactMetric=(title,value,theme,icon,target,help)=>`<button type="button" class="home-metric home-metric-${theme}" data-page="${target}" aria-label="${esc(title)}: ${number(value)}. ${esc(help)}"><span class="home-metric-top"><span>${esc(title)}</span><span class="home-metric-icon">${whIcon(icon,18)}</span></span><span class="home-metric-bottom"><strong>${number(value)}</strong><span class="home-metric-arrow">${whIcon('arrow',16)}</span></span></button>`;
+  const warning=cloudBlocked?`<div class="home-warning"><span>${whIcon('alert',17)} <b>Có xung đột đồng bộ</b> — dữ liệu Sheets cần được kiểm tra.</span><button type="button" data-page="settings">Kiểm tra ${whIcon('arrow',15)}</button></div>`:cloudDirty.size?`<div class="home-warning"><span>${whIcon('cloud',17)} <b>${cloudDirty.size} nhóm dữ liệu đang chờ đồng bộ</b> lên Google Sheets.</span><button type="button" ${cloudIsConnected()?'data-page="settings"':'data-action="cloud-connect"'}>${cloudIsConnected()?'Xem chi tiết':'Kết nối Google'} ${whIcon('arrow',15)}</button></div>`:'';
+  const taskRows=tasks.map(t=>{
+    const late=!!(t.due&&t.due<current),todayDue=t.due===current;
+    const state=late?'Quá hạn':todayDue?'Đến hạn hôm nay':t.priority==='Khẩn'?'Khẩn':t.status||'Chưa làm';
+    return `<div class="home-task"><span class="home-task-mark ${late?'is-late':todayDue?'is-today':''}"></span><div class="home-task-main"><b title="${esc(t.title)}">${esc(t.title)}</b><small>${t.due?'Hạn '+viDate(t.due):'Chưa có hạn'}${t.project?' · '+esc(t.project):''}</small></div><span class="home-task-status ${late?'is-late':todayDue?'is-today':''}">${esc(state)}</span><button type="button" class="home-task-edit" data-action="edit" data-kind="tasks" data-id="${esc(t.id)}" aria-label="Mở công việc ${esc(t.title)}">${whIcon('arrow',17)}</button></div>`;
+  }).join('');
+  return `<div class="home-simple" aria-label="Bảng tổng quan ngắn gọn">
+    ${warning}
+    <div class="home-metrics" aria-label="Chỉ số quan trọng">
+      ${compactMetric('Công việc chưa xong',active.length,'indigo','tasks','tasks','Xem công việc')}
+      ${compactMetric('Việc quá hạn',overdue.length,'amber','alert','tasks','Xem công việc')}
+      ${compactMetric('Giao sai chưa xử lý',mistakes.length,'pink','mistakes','mistakes','Xem giao sai')}
+    </div>
+    <div class="home-layout">
+      <section class="home-block home-priorities">
+        <div class="home-block-head"><div><span class="home-eyebrow">CẦN QUAN TÂM</span><h2>Việc cần xử lý</h2><p>${dueToday.length?`${number(dueToday.length)} việc đến hạn hôm nay`:'Theo dõi 5 việc ưu tiên nhất'}</p></div><button type="button" class="home-all" data-page="tasks">Xem tất cả ${whIcon('arrow',16)}</button></div>
+        <div class="home-tasks">${tasks.length?taskRows:`<div class="home-task-empty">${whIcon('check',28)}<strong>Không có việc đang chờ</strong><span>Bạn đã xử lý xong các công việc hiện tại.</span></div>`}</div>
+      </section>
+      <section class="home-block home-tools">
+        <div class="home-block-head"><div><span class="home-eyebrow">THAO TÁC NHANH</span><h2>Công cụ kho</h2><p>Chọn chức năng bạn cần</p></div></div>
+        <div class="home-tool-list">
+          <button type="button" class="home-tool" data-page="stock"><span class="home-tool-icon tool-blue">${whIcon('scan',21)}</span><span>Tra cứu tồn <small>SKU · Barcode · Size</small></span>${whIcon('arrow',17)}</button>
+          <button type="button" class="home-tool" data-page="count"><span class="home-tool-icon tool-mint">${whIcon('count',21)}</span><span>Kiểm kho <small>Ghi nhận số thực tế</small></span>${whIcon('arrow',17)}</button>
+          <button type="button" class="home-tool" data-page="returns"><span class="home-tool-icon tool-pink">${whIcon('returns',21)}</span><span>Hàng hoàn & video <small>Quét mã · Quay video</small></span>${whIcon('arrow',17)}</button>
+        </div>
+      </section>
+    </div>
+  </div>`;
+}
 
 function searchbar(id,placeholder){return `<input id="${id}" type="search" placeholder="${esc(placeholder)}" autocomplete="off">`}
 function recordColumns(kind){return kind==='tasks'?[['title','Tên công việc'],['project','Dự án'],['owner','PIC'],['status','Trạng thái'],['priority','Ưu tiên'],['due','Hạn']]:[['date','Ngày'],['orderCode','Mã đơn'],['channel','Kênh'],['errorType','Loại lỗi'],['pic','PIC'],['status','Trạng thái'],['cost','Tổng phí']]}
