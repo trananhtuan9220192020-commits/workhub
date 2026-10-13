@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 5.7.2 · Workspace</title>
+<title>WorkHub 5.7.2.1 · Workspace</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#f5f7f9;--surface:#fff;--ink:#162b32;--muted:#71818b;--line:#e5ecef;--green:#15836c;--deep:#173d37;--pale:#eaf6f1;--red:#b74649;--amber:#b07a32;--shadow:0 7px 28px #21423b0b}
@@ -182,10 +182,17 @@ body[data-theme=dark] .upload-dock{box-shadow:0 18px 48px #0008}body[data-theme=
 .transfer-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:14px 0}.transfer-actions .note{margin:0}
 .transfer-table{min-width:1040px}.transfer-table td{vertical-align:middle}.transfer-table td small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.transfer-table td.transfer-product{min-width:240px;max-width:370px;white-space:normal}.transfer-product>b{font-size:12px}.transfer-product select{max-width:330px;width:100%;margin-top:6px;font-size:12px}
 .transfer-table .transfer-sent-input{width:85px;min-width:75px;text-align:center;font-weight:700}.transfer-table tr.transfer-problem td:last-child{color:#dc5959}.transfer-table-wrap{max-height:600px;overflow:auto}.transfer-table-wrap thead th{position:sticky;top:0;background:var(--surface);z-index:2}
-.transfer-pdf{position:absolute;left:0;top:0;z-index:-1;background:white;width:795px;min-height:650px;color:#15252d;font:14px Arial,sans-serif;padding:20px 12px}
+.transfer-pdf{position:relative;left:auto;top:auto;z-index:auto;box-sizing:border-box;flex:0 0 795px;background:white;width:795px;min-height:650px;color:#15252d;font:14px Arial,sans-serif;padding:20px 12px}
 .transfer-pdf-head{display:flex;justify-content:space-between;gap:20px}.transfer-pdf h1{font-size:21px;margin:0 0 15px;font-weight:800}.transfer-pdf h3{font-size:12px}.transfer-pdf p{margin:6px 0}.transfer-pdf-code{text-align:right;max-width:240px;font-size:16px}.transfer-pdf-places{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:28px 0 15px}.transfer-pdf-places>div{border-top:2px solid #111;padding:5px 0}.transfer-pdf table{border-collapse:collapse;width:100%;font-size:12px}.transfer-pdf th{background:#eff2f3;font-weight:700;text-align:left}.transfer-pdf th,.transfer-pdf td{border:1px solid #cbd2d5;padding:9px 7px;vertical-align:top}.transfer-pdf td small{display:block;margin-top:4px;color:#516575}.transfer-pdf td:nth-last-child(-n+3),.transfer-pdf th:nth-last-child(-n+3){text-align:center}.transfer-pdf tr{break-inside:avoid;page-break-inside:avoid}.transfer-pdf tfoot{background:#f3f4f4}.transfer-pdf-footnote{font-size:10px;line-height:1.5;margin-top:18px!important}.transfer-pdf-sign{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:10px;margin-top:28px;font-weight:bold;font-size:11px;min-height:85px}.transfer-pdf-sign small{font-weight:normal}
 @media(max-width:740px){.transfer-import{grid-template-columns:1fr}.transfer-filter{grid-template-columns:1fr}.transfer-metrics{gap:6px}.transfer-metrics>span{flex:1 1 43%}.transfer-metrics b{font-size:16px}.transfer-pdf{width:795px}}
 
+
+/* 5.7.2.1 PDF HOTFIX: keep the export source visible to the renderer.
+   A negative z-index made Chrome/html2canvas capture an empty page. */
+.transfer-pdf-stage{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:16px;background:rgba(8,14,28,.84);box-sizing:border-box}
+.transfer-pdf-stage .transfer-pdf{background:#fff;box-shadow:0 16px 70px #0005;max-width:none;min-width:795px;min-height:700px}
+.transfer-pdf-stage .transfer-pdf :is(h1,h3,p,b,td,th,small){color:#15252d}
+@media(max-width:750px){.transfer-pdf-stage{justify-content:flex-start}}
 </style>
 <style>
 
@@ -327,14 +334,14 @@ body[data-theme=dark] .home-all:hover{background:#343050!important}
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.2</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.2.1</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
   <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB · YOUR DAILY WORKSPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Quản lý công việc kho trong một nơi duy nhất</p></div><div class="topright"><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.7.2 · GitHub Pages · OAuth Google, không lưu mật khẩu và access token trong mã nguồn</div>
+  <div class="footerline">WorkHub 5.7.2.1 · GitHub Pages · OAuth Google, không lưu mật khẩu và access token trong mã nguồn</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
@@ -1023,7 +1030,21 @@ async function transferPdf(){
  <table><thead><tr><th>STT</th><th>SKU / Mã 4 số</th><th>Sản phẩm / Size</th><th>Đề xuất</th><th>Khả dụng HT</th><th>Gửi đợt này</th><th>Chờ gửi</th></tr></thead><tbody>${lines.map((r,i)=>{const x=r.x,s=transferResolved(x);return `<tr><td>${i+1}</td><td><b>${esc(s.chosen.sku)}</b><small>${esc(x.code)}</small></td><td>${esc(s.chosen.product||x.product)}<small>${esc(s.chosen.variant||x.size)}</small></td><td>${number(x.proposed)}</td><td>${number(s.available)}</td><td><b>${number(r.qty)}</b></td><td>${number(transferPending(x))}</td></tr>`}).join('')}</tbody><tfoot><tr><td colspan="3"><b>TỔNG</b></td><td>${number(lines.reduce((a,r)=>a+r.x.proposed,0))}</td><td>—</td><td>${number(dispatch.qty)}</td><td>${number(lines.reduce((a,r)=>a+transferPending(r.x),0))}</td></tr></tfoot></table>
  <p class="transfer-pdf-footnote">Tồn khả dụng hệ thống Haravan tại ${esc(data.settings.stockUpdated||'thời điểm cập nhật gần nhất')}; không thay cho tồn thực tế. PDF chỉ ghi nhận <b>lần gửi ${esc(viDate(dispatch.date))}</b>, không cộng lẫn những đợt giao trước/sau. WorkHub không tự trừ tồn Haravan.</p>
  <div class="transfer-pdf-sign"><div>NGƯỜI LẬP PHIẾU<br><small>(Ký và ghi rõ họ tên)</small></div><div>NGƯỜI GIAO HÀNG<br><small>(Ký và ghi rõ họ tên)</small></div><div>NGƯỜI NHẬN HÀNG<br><small>(Ký và ghi rõ họ tên)</small></div></div>`;
- document.body.appendChild(el);try{try{if(!window.JsBarcode)await loadJs('https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js');if(window.JsBarcode){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');window.JsBarcode(svg,String(code),{format:'CODE128',width:1.25,height:40,displayValue:false,margin:3});el.querySelector('.transfer-pdf-code')?.appendChild(svg)}}catch(e){console.warn('Barcode không khả dụng',e)}if(!window.html2pdf)await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');await html2pdf().set({margin:[9,8,9,8],filename:'Luan_Chuyen_'+String(code).replace(/[^A-Za-z0-9_-]/g,'_')+'.pdf',image:{type:'jpeg',quality:.95},html2canvas:{scale:1.65,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(el).save();toast('Đã xuất PDF lần gửi '+viDate(dispatch.date))}finally{el.remove()}
+ // Render the original content on a visible, white canvas. Do NOT place it at z-index:-1:
+ // html2canvas may capture an entirely white A4 sheet from a hidden/underlaid element.
+ const stage=document.createElement('div');stage.className='transfer-pdf-stage';stage.setAttribute('role','status');stage.setAttribute('aria-label','Đang tạo phiếu PDF');
+ stage.appendChild(el);document.body.appendChild(stage);
+ try{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));try{if(!window.JsBarcode)await loadJs('https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js');if(window.JsBarcode){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');window.JsBarcode(svg,String(code),{format:'CODE128',width:1.25,height:40,displayValue:false,margin:3});el.querySelector('.transfer-pdf-code')?.appendChild(svg)}}catch(e){console.warn('Barcode không khả dụng',e)}if(!window.html2pdf)await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');// Build canvas first so blank or invalid exports are stopped before download.
+ const worker=html2pdf().set({margin:[9,8,9,8],filename:'Luan_Chuyen_'+String(code).replace(/[^A-Za-z0-9_-]/g,'_')+'.pdf',image:{type:'jpeg',quality:.95},html2canvas:{scale:1.55,useCORS:true,backgroundColor:'#ffffff',logging:false},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(el).toCanvas();
+ const canvas=await worker.get('canvas');
+ if(!canvas||canvas.width<200||canvas.height<200)throw new Error('Không dựng được trang phiếu PDF. Không tải file trắng.');
+ let detected=false;
+ try{const ctx=canvas.getContext('2d',{willReadFrequently:true});const img=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  let colored=0;for(let i=0;i<img.length;i+=4*19){if(img[i]+img[i+1]+img[i+2]<660&&img[i+3]>40){if(++colored>=40){detected=true;break}}}
+ }catch(e){console.warn('Không đọc được pixel PDF; kiểm tra DOM thay thế',e);detected=!!el.querySelector('tbody tr')&&el.textContent.includes('PHIẾU ĐIỀU CHUYỂN')}
+ if(!detected)throw new Error('Ảnh PDF đang trắng; WorkHub đã chặn tải file rỗng. Vui lòng thử lại trong Chrome hoặc liên hệ hỗ trợ.');
+ await worker.toPdf().save();toast('Đã xuất PDF lần gửi '+viDate(dispatch.date))
+ }finally{stage.remove()}
 }
 function transferCsv(){const rows=transferBatchRows();if(!rows.length)throw new Error('Không có phiếu để xuất');const headers=['Mã phiếu','Ngày đề xuất','Kho xuất','Kho nhận','Mã 4 số','Size','SKU','Sản phẩm','SL đề xuất','Khả dụng HT kho xuất','Đã gửi WorkHub','SL gửi trên file nguồn','Còn chờ','Chi tiết lần gửi'];const body=rows.map(x=>{const s=transferResolved(x);return [x.batch,x.date,x.from,x.to,x.code,x.size,s.chosen?.sku||'',s.chosen?.product||x.product,x.proposed,s.available??'',transferSentTotal(x),x.sourceSent||0,transferPending(x),transferEntriesWithLegacy(x).map(e=>e.date+': '+e.qty+(e.ref?' ('+e.ref+')':'')).join('; ')]});const escCsv=x=>{let s=String(x??'');if(/^[=+@-]/.test(s.trimStart()))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};download('\uFEFF'+[headers,...body].map(r=>r.map(escCsv).join(',')).join('\r\n'),'WorkHub_LuanChuyen_'+today()+'.csv','text/csv;charset=utf-8')}
 function transferOnInput(e){const t=e.target;
