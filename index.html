@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 5.7.4 · Workspace</title>
+<title>WorkHub 5.7.4.1 · Workspace</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#f5f7f9;--surface:#fff;--ink:#162b32;--muted:#71818b;--line:#e5ecef;--green:#15836c;--deep:#173d37;--pale:#eaf6f1;--red:#b74649;--amber:#b07a32;--shadow:0 7px 28px #21423b0b}
@@ -144,7 +144,7 @@ body[data-theme=dark] .upload-dock{box-shadow:0 18px 48px #0008}body[data-theme=
 .reminder-dock.hidden{display:none}.reminder-dock-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.reminder-dock-head h3{margin:0;font-size:16px}.reminder-entry{padding:12px 0;border-top:1px solid var(--line)}.reminder-entry b{display:block;font-size:13px;margin-bottom:3px;overflow-wrap:anywhere}.reminder-entry small{display:block;color:var(--muted);font-size:11px;margin-bottom:9px}.reminder-entry .flex{gap:7px}.reminder-entry button{min-height:32px;font-size:11px}.reminder-hint{font-size:11px;color:var(--muted);margin:9px 0 0}.reminder-setting{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface)}.reminder-setting p{grid-column:1/-1;font-size:11px;color:var(--muted);margin:0}.reminder-setting button{grid-column:1/-1;justify-self:start}.reminder-setting .calendar-status{grid-column:1/-1;font-size:11px;color:var(--muted)}.reminder-fields-note{font-size:11px;color:var(--muted);grid-column:1/-1}.reminder-flag{display:flex!important;align-items:center;gap:9px;flex-direction:row!important;min-height:42px}.reminder-flag input{width:17px!important;height:17px!important;margin:0!important;min-height:17px!important}.task-remind-tag{font-size:11px;color:var(--muted);white-space:nowrap}
 @media(max-width:750px){.reminder-dock{top:70px;right:10px;max-width:calc(100vw - 20px);width:370px}.reminder-bell{min-height:37px;padding:8px 10px}.reminder-bell .bell-label{display:none}}
 /* WorkHub 5.7.1: transfers */
-/* 5.7.4 · Transfer workbench: focused and readable */
+/* 5.7.4.1 · Transfer workbench: focused and readable */
 .transfer-workspace{display:grid;gap:17px;min-width:0}
 .transfer-workspace .panel{padding:24px 26px}
 .transfer-workspace .panel-head h2{margin:4px 0 7px;font-size:20px;letter-spacing:-.5px}
@@ -187,14 +187,14 @@ body[data-theme=dark] .upload-dock{box-shadow:0 18px 48px #0008}body[data-theme=
 @media(max-width:740px){.transfer-import{grid-template-columns:1fr}.transfer-filter{grid-template-columns:1fr}.transfer-metrics{gap:6px}.transfer-metrics>span{flex:1 1 43%}.transfer-metrics b{font-size:16px}.transfer-pdf{width:795px}}
 
 
-/* 5.7.4 PDF HOTFIX: keep the export source visible to the renderer.
+/* 5.7.4.1 PDF HOTFIX: keep the export source visible to the renderer.
    A negative z-index made Chrome/html2canvas capture an empty page. */
 .transfer-pdf-stage{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:16px;background:rgba(8,14,28,.84);box-sizing:border-box}
 .transfer-pdf-stage .transfer-pdf{background:#fff;box-shadow:0 16px 70px #0005;max-width:none;min-width:795px;min-height:700px}
 .transfer-pdf-stage .transfer-pdf :is(h1,h3,p,b,td,th,small){color:#15252d}
 @media(max-width:750px){.transfer-pdf-stage{justify-content:flex-start}}
 
-/* WorkHub 5.7.4 - simplified transfers */
+/* WorkHub 5.7.4.1 - simplified transfers */
 .transfer-v573 .transfer-hero{padding:23px 25px!important}
 .transfer-v573 .transfer-hero .panel-head{margin-bottom:16px}
 .transfer-v573 .transfer-selector-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -244,7 +244,7 @@ body[data-theme=dark] .upload-dock{box-shadow:0 18px 48px #0008}body[data-theme=
 @media(max-width:550px){.transfer-v573 .transfer-hero{padding:18px 15px!important}.transfer-v573 .transfer-selector-grid{gap:8px}.transfer-v573 .transfer-summary{grid-template-columns:1fr 1fr}.transfer-v573 .transfer-summary>div:last-child{grid-column:1/-1}.transfer-v573 .transfer-head-actions button{flex:1 1 auto}}
 
 
-/* WorkHub 5.7.4 · simplified transfer preparation */
+/* WorkHub 5.7.4.1 · simplified transfer preparation */
 .transfer-v574{display:grid;gap:17px}
 .transfer-v574 .transfer-simple-hero,.transfer-v574 .transfer-prepare,.transfer-v574 .transfer-archive{padding:22px 24px}
 .transfer-v574 .transfer-selector-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -441,14 +441,14 @@ body[data-theme=dark] .home-all:hover{background:#343050!important}
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.4</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.4.1</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
   <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB · YOUR DAILY WORKSPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Quản lý công việc kho trong một nơi duy nhất</p></div><div class="topright"><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.7.4 · GitHub Pages · OAuth Google, không lưu mật khẩu và access token trong mã nguồn</div>
+  <div class="footerline">WorkHub 5.7.4.1 · GitHub Pages · OAuth Google, không lưu mật khẩu và access token trong mã nguồn</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
@@ -964,7 +964,7 @@ function transferImportRows(rows){
  return {rows:found,skipped};
 }
 function transferShipmentEntries(x){try{const parsed=typeof x.shipments==='string'?JSON.parse(x.shipments||'[]'):(x.shipments||[]);return Array.isArray(parsed)?parsed.filter(v=>v&&v.id&&!v.voided):[]}catch{return []}}
-function transferEntriesWithLegacy(x){const entries=transferShipmentEntries(x);if(!entries.length&&transferInt(x.sent)>0)return [{id:'legacy-'+x.id,group:'legacy-'+x.batch,date:x.date||'',qty:transferInt(x.sent),legacy:true,note:'Số đã lưu trước 5.7.4, cần đối soát'}];return entries}
+function transferEntriesWithLegacy(x){const entries=transferShipmentEntries(x);if(!entries.length&&transferInt(x.sent)>0)return [{id:'legacy-'+x.id,group:'legacy-'+x.batch,date:x.date||'',qty:transferInt(x.sent),legacy:true,note:'Số đã lưu trước 5.7.4.1, cần đối soát'}];return entries}
 function transferSentTotal(x){return transferEntriesWithLegacy(x).reduce((n,v)=>n+transferInt(v.qty),0)}
 function transferPending(x){return Math.max(0,transferInt(x.proposed)-transferSentTotal(x))}
 function transferAllWarehouseChoices(){return [...new Set((data.transfers||[]).flatMap(x=>[x.from,x.to]).filter(Boolean))].sort((a,b)=>isOnlineWarehouse(a)?-1:isOnlineWarehouse(b)?1:a.localeCompare(b,'vi'))}
@@ -977,30 +977,47 @@ function transferRoutes(){const all=(data.transfers||[]);const origins=[...new S
 function transferCurrentRows(){transferRoutes();let all=(data.transfers||[]).filter(x=>(!transferFrom||x.from===transferFrom)&&(!transferTo||x.to===transferTo)&&(!transferRequestDate||x.date===transferRequestDate)&&(!transferBatch||x.batch===transferBatch));const s=stockKey(transferSearch);if(s)all=all.filter(x=>[x.batch,x.code,x.product,x.size,x.from,x.to,x.resolvedSku].some(v=>stockKey(v).includes(s)));if(transferHistoryMode==='pending')all=all.filter(x=>transferTrackPending(x)>0);else if(transferHistoryMode==='done')all=all.filter(x=>transferTrackPending(x)===0);return all}
 function transferBatchRows(){transferRoutes();return (data.transfers||[]).filter(x=>x.batch===transferBatch&&x.from===transferFrom&&x.to===transferTo&&x.date===transferRequestDate)}
 function transferDispatches(rows){const by=new Map();for(const x of rows)for(const y of transferEntriesWithLegacy(x)){const id=y.group||y.id;if(!by.has(id))by.set(id,{id,date:y.date||x.date,ref:y.ref||'',qty:0,lines:0,legacy:!!y.legacy});const z=by.get(id);z.qty+=transferInt(y.qty);z.lines++;}return [...by.values()].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id))}
+// The transfer source uses short store names (e.g. "Nguyễn Trãi") while Haravan
+// uses prefixed names (e.g. "LIBÉ NGUYỄN TRÃI"). Both must map to the SAME store.
+function transferWarehouseKey(value){
+ const raw=stockKey(value).replace(/[^A-Z0-9]+/g,' ').replace(/\s+/g,' ').trim();
+ if(isOnlineWarehouse(value))return 'ONLINE';
+ const known=['NGUYEN TRAI','LY TU TRONG','THAI PHIEN'];
+ for(const name of known)if((' '+raw+' ').includes(' '+name+' '))return name;
+ return raw.replace(/^(?:(?:LIBE|KHO|CUA HANG|CHI NHANH|SHOP|STORE)\s+)+/,'').trim();
+}
+function transferStockSize(value){return stockKey(value).replace(/^SIZE\s*[:\-]?\s*/,'').replace(/\s+/g,'')}
 let transferStockIndex=null,transferStockSnapshot=null;
 function transferIndexedStock(){
  if(transferStockSnapshot===data.stock&&transferStockIndex)return transferStockIndex;
- const index=new Map();
+ const index=new Map(),warehouses=new Set(),codes=new Set();
  for(const x of data.stock){
   const code=exact4Of(x);if(!code)continue;
-  const wh=isOnlineWarehouse(x.warehouse)?'ONLINE':stockKey(x.warehouse),size=stockKey(x.size||transferSize(x.variant));
-  const sku=String(x.sku||x.barcode||'').trim();if(!sku||!size)continue;
+  const wh=transferWarehouseKey(x.warehouse),size=transferStockSize(x.size||transferSize(x.variant));
+  const sku=String(x.sku||x.barcode||'').trim();if(!sku||!size||!wh)continue;
+  warehouses.add(wh);codes.add(wh+'|'+code);
   const key=wh+'|'+code+'|'+size;let map=index.get(key);if(!map){map=new Map();index.set(key,map)}
   const v=map.get(sku)||{sku,available:0,product:x.product,variant:x.variant,barcode:x.barcode,rows:0};
   v.available+=Math.max(0,Number(x.available)||0);v.rows++;map.set(sku,v);
  }
+ index.warehouses=warehouses;index.codes=codes;
  transferStockIndex=index;transferStockSnapshot=data.stock;return index;
 }
 function transferStockMatches(item){
- const wh=isOnlineWarehouse(item.from)?'ONLINE':stockKey(item.from);
- const key=wh+'|'+item.code+'|'+stockKey(item.size);
+ const key=transferWarehouseKey(item.from)+'|'+item.code+'|'+transferStockSize(item.size);
  return [...(transferIndexedStock().get(key)?.values()||[])];
 }
-
+function transferMatchStatus(item,choices){
+ if(!data.stock.length)return 'Chưa tải tồn Haravan';
+ if(choices.length>1)return 'Trùng SKU – chọn mã';
+ const warehouse=transferWarehouseKey(item.from),index=transferIndexedStock();
+ if(!index.warehouses.has(warehouse))return 'Không có dữ liệu kho xuất';
+ return index.codes.has(warehouse+'|'+item.code)?'Không có size ở kho xuất':'Không tìm thấy mã ở kho xuất';
+}
 function transferResolved(item){
  const choices=transferStockMatches(item),selected=item.resolvedSku?choices.find(x=>x.sku===item.resolvedSku):null;
  const chosen=selected||(choices.length===1?choices[0]:null);
- return {choices,chosen,available:chosen?chosen.available:null,status:!choices.length?'Không tìm thấy SKU + size':!chosen?'Nhiều SKU phù hợp':'OK'};
+ return {choices,chosen,available:chosen?chosen.available:null,status:chosen?'OK':transferMatchStatus(item,choices)};
 }
 function transferTotals(rows){const t={proposed:0,sent:0,pending:0,issues:0};for(const x of rows){t.proposed+=transferInt(x.proposed);t.sent+=transferSentTotal(x);t.pending+=transferPending(x);const v=transferResolved(x);if(!v.chosen||transferSentTotal(x)>x.proposed||(transferInt(x.sourceSent)>0&&transferInt(x.sourceSent)!==transferSentTotal(x)))t.issues++}return t}
 function transferOpt(list,sel,formatter=(v)=>v){return list.map(x=>`<option value="${esc(x)}" ${x===sel?'selected':''}>${esc(formatter(x))}</option>`).join('')}
@@ -1042,7 +1059,7 @@ function renderTransfers(){
  <div class="transfer-three-numbers"><div><small>Cửa hàng đề xuất</small><b>${number(prop)} SP</b></div><div><small>Đã gửi trong lịch sử</small><b>${number(sent)} SP</b></div><div><small>Còn chờ</small><b>${number(Math.max(0,prop-sent))} SP</b></div></div>
  <p class="transfer-helper">PDF có cột <strong>Thực gửi để trống</strong> để bạn viết tay khi soạn. Sau khi soạn xong, nhập số vào bảng bên dưới và lưu. Không cần xuất PDF mới để lưu lịch sử.</p>
  <div class="transfer-prep-heading"><h3>Mã hàng cần soạn <span class="muted">(${number(batch.length)} dòng)</span></h3><label>Ngày thực gửi <input id="transferDispatchDate" type="date" value="${esc(transferDispatchDate)}"></label></div>
- <div class="tablewrap transfer-prep-wrap"><table class="transfer-prep-table"><thead><tr><th>Mã / Size</th><th>Sản phẩm</th><th>SL đề xuất</th><th>Khả dụng HT kho xuất</th><th>Thực gửi</th></tr></thead><tbody>${batch.map(x=>{const m=transferResolved(x),num=transferTrackPending(x),value=transferDrafts.get(x.id)||'';return `<tr><td><b>${esc(x.code)}</b><small>Size ${esc(x.size)}</small><small>${esc(m.chosen?.sku||x.sourceSku||'')}</small></td><td><b>${esc(m.chosen?.product||x.product||'Sản phẩm chưa rõ')}</b><small>${esc(x.variantHint||'')}</small>${m.choices.length>1?`<label class="transfer-ambiguous">Chọn SKU đúng<select data-transfer-sku="${esc(x.id)}"><option value="">Chưa chọn (${m.choices.length} SKU)</option>${transferOpt(m.choices.map(y=>y.sku),x.resolvedSku||'')}</select></label>`:''}</td><td class="transfer-number">${number(x.proposed)}${num<x.proposed?`<small>Còn chờ ${number(num)}</small>`:''}</td><td class="transfer-number">${m.available===null?'<span class="transfer-unmatched">Chưa khớp</span>':number(m.available)}</td><td><input type="number" min="0" step="1" inputmode="numeric" data-transfer-draft="${esc(x.id)}" value="${esc(value)}" placeholder="Để trống" aria-label="Thực gửi ${esc(x.code)} size ${esc(x.size)}"></td></tr>`}).join('')}</tbody></table></div>
+ <div class="tablewrap transfer-prep-wrap"><table class="transfer-prep-table"><thead><tr><th>Mã / Size</th><th>Sản phẩm</th><th>SL đề xuất</th><th>Khả dụng HT kho xuất</th><th>Thực gửi</th></tr></thead><tbody>${batch.map(x=>{const m=transferResolved(x),num=transferTrackPending(x),value=transferDrafts.get(x.id)||'';return `<tr><td><b>${esc(x.code)}</b><small>Size ${esc(x.size)}</small><small>${esc(m.chosen?.sku||x.sourceSku||'')}</small></td><td><b>${esc(m.chosen?.product||x.product||'Sản phẩm chưa rõ')}</b><small>${esc(x.variantHint||'')}</small>${m.choices.length>1?`<label class="transfer-ambiguous">Chọn SKU đúng<select data-transfer-sku="${esc(x.id)}"><option value="">Chưa chọn (${m.choices.length} SKU)</option>${transferOpt(m.choices.map(y=>y.sku),x.resolvedSku||'')}</select></label>`:''}</td><td class="transfer-number">${number(x.proposed)}${num<x.proposed?`<small>Còn chờ ${number(num)}</small>`:''}</td><td class="transfer-number">${m.available===null?'<span class="transfer-unmatched" title="'+esc(m.status)+'">'+esc(m.status)+'</span>':number(m.available)}</td><td><input type="number" min="0" step="1" inputmode="numeric" data-transfer-draft="${esc(x.id)}" value="${esc(value)}" placeholder="Để trống" aria-label="Thực gửi ${esc(x.code)} size ${esc(x.size)}"></td></tr>`}).join('')}</tbody></table></div>
  <div class="transfer-savebar"><span class="note">Chỉ ghi vào lịch sử WorkHub cá nhân; <strong>không sửa Sheet luân chuyển gốc</strong>.</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving?'disabled':''}>✓ Lưu số lượng đã gửi</button></div></section>`}
  <section class="panel transfer-archive"><div class="transfer-section-heading"><div><span class="panel-eyebrow">TRA CỨU</span><h2>Lịch sử đã gửi hàng</h2><p class="note">Chọn ngày gửi và cửa hàng để xem lại số lượng cùng từng mã đã gửi.</p></div><span class="badge info">${number(histAll.length)} lần gửi</span></div>
  <div class="transfer-history-filter"><label>Ngày thực gửi <input type="date" id="transferHistoryDate" value="${esc(transferHistoryDate)}"></label><label>Cửa hàng <select id="transferHistoryShop"><option value="">Tất cả cửa hàng</option>${transferOpt(shops,transferHistoryShop)}</select></label><label>Tìm mã / size / tuyến <input id="transferHistoryQuery" type="search" placeholder="VD: 7810 / LTT" value="${esc(transferHistoryQuery)}"></label><button type="button" class="small" data-action="transfer-clear-history">Xóa lọc</button></div>
