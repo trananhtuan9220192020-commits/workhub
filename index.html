@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 5.7.6.3 · Workspace</title>
+<title>WorkHub 5.7.6.4 · Workspace</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#f5f7f9;--surface:#fff;--ink:#162b32;--muted:#71818b;--line:#e5ecef;--green:#15836c;--deep:#173d37;--pale:#eaf6f1;--red:#b74649;--amber:#b07a32;--shadow:0 7px 28px #21423b0b}
@@ -470,14 +470,14 @@ body[data-theme=dark]{--bg:#10182b;--surface:#1b2641;--ink:#e8edff;--muted:#a2af
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.6.3</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.6.4</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
   <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB <span class="wh-spark">✦</span> DAILY SPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Tất cả công việc, trong một nơi</p></div><div class="topright"><button class="wh-command" type="button" data-action="quick-open" title="Tìm nhanh chức năng · Ctrl+K" aria-label="Mở tìm nhanh">⌕ <span>Tìm nhanh</span><kbd>⌘K</kbd></button><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.7.6.3 · Made for warehouse operations</div>
+  <div class="footerline">WorkHub 5.7.6.4 · Made for warehouse operations</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
@@ -909,6 +909,77 @@ function renderLocalReports(){const active=data.tasks.filter(x=>x.status!=='Hoà
 const REPORTS_SOURCE_MAX_ROWS=2500;
 let warehouseReport={loaded:false,loading:false,rows:[],months:[],error:'',at:''};
 let warehouseMonth='',warehouseStaff='',warehouseLimit=25,reportSection='warehouse';
+// Các liên kết nguồn dùng chung giữa thiết bị. Không chứa token hoặc mật khẩu.
+// WH_META A40:B43 được dành riêng cho cấu hình này; không chạm tới revision/các tab cũ.
+const WH_SHARED_LINK_ROWS={version:40,report:41,chip:42,folder:43};
+const WH_SHARED_LINK_LABELS={version:'workhubLinksVersion',report:'reportSourceSheetId',chip:'chipSourceSheetId',folder:'cloudDriveFolderId'};
+let whSharedLinksBusy=false;
+let whSharedLinksLastRead=0;
+function whSharedSheetId(raw){
+ const m=String(raw||'').trim().match(/(?:\/spreadsheets\/d\/)([A-Za-z0-9_-]{18,})/);
+ const id=m?.[1]||(/^[A-Za-z0-9_-]{18,}$/.test(String(raw||'').trim())?String(raw).trim():'');
+ return id;
+}
+function whSharedLinkVal(k){
+ if(k==='report')return whSharedSheetId(data.settings.reportSourceSheetId||'');
+ if(k==='chip')return whSharedSheetId(data.settings.chipSourceSheetId||chipSourceUrl());
+ if(k==='folder')return String(data.settings.cloudDriveFolderId||'').trim();
+ return '1';
+}
+async function whSharedReadRemote(){
+ const id=encodeURIComponent(data.settings.cloudSheetId);
+ const url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/'+encodeURIComponent("'WH_META'!A40:B43");
+ const r=await cloudJson(url),out={};
+ const entries=['version','report','chip','folder'];
+ for(let n=0;n<entries.length;n++){
+  const row=r.values?.[n]||[],key=entries[n],label=String(row[0]||'');
+  if((label&&label!==WH_SHARED_LINK_LABELS[key])||(!label&&String(row[1]||'').trim()))throw new Error('WH_META dòng '+WH_SHARED_LINK_ROWS[key]+' đang được sử dụng cho dữ liệu khác. Không ghi đè.');
+  out[key]=label?String(row[1]||'').trim():'';
+ }
+ return out;
+}
+async function whSharedWrite(k,val){
+ if(!cloudIsConnected()||!data.settings.cloudSheetId)return false;
+ const row=WH_SHARED_LINK_ROWS[k],label=WH_SHARED_LINK_LABELS[k];
+ if(!row)throw new Error('Cấu hình không hợp lệ');
+ const id=encodeURIComponent(data.settings.cloudSheetId);
+ const url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/'+encodeURIComponent("'WH_META'!A"+row+':B'+row);
+ const prev=await cloudJson(url),existing=String(prev.values?.[0]?.[0]||'');
+ if((existing&&existing!==label)||(!existing&&String(prev.values?.[0]?.[1]||'').trim()))throw new Error('Không thể ghi cấu hình vào WH_META vì dòng đã được sử dụng.');
+ await cloudJson(url+'?valueInputOption=RAW','PUT',{values:[[label,String(val||'')]]});
+ return true;
+}
+async function whSharedLoad({seedLocal=true}={}){
+ if(whSharedLinksBusy||!cloudIsConnected()||!data.settings.cloudSheetId)return false;
+ whSharedLinksBusy=true;
+ try{
+  const remote=await whSharedReadRemote();
+  let changed=false;
+  const savedReport=whSharedSheetId(remote.report),localReport=whSharedLinkVal('report');
+  const savedChip=whSharedSheetId(remote.chip),localChip=whSharedLinkVal('chip');
+  if(savedReport&&savedReport!==localReport){
+   data.settings.reportSourceSheetId=savedReport;
+   warehouseReport={loaded:false,loading:false,rows:[],months:[],error:'',at:''};
+   changed=true;
+  }
+  if(savedChip&&savedChip!==localChip){
+   data.settings.chipSourceSheetId=savedChip;
+   try{localStorage.setItem(CHIP_LINK_KEY,'https://docs.google.com/spreadsheets/d/'+savedChip+'/edit')}catch{}
+   chipState.rows=null;chipState.loaded=false;chipState.error='';changed=true;
+  }
+  if(remote.folder&&/^[A-Za-z0-9_-]{10,}$/.test(remote.folder)&&!data.settings.cloudDriveFolderId){
+   data.settings.cloudDriveFolderId=remote.folder;changed=true;
+  }
+  if(changed){await dbSet('settings',data.settings);render();}
+  if(seedLocal){
+   if(!remote.version)await whSharedWrite('version','1');
+   if(!remote.report&&localReport)await whSharedWrite('report',localReport);
+   if(!remote.chip&&localChip)await whSharedWrite('chip',localChip);
+   if(!remote.folder&&data.settings.cloudDriveFolderId)await whSharedWrite('folder',data.settings.cloudDriveFolderId);
+  }
+  whSharedLinksLastRead=Date.now();return changed;
+ }finally{whSharedLinksBusy=false;}
+}
 function getWarehouseId(){return String(data.settings.reportSourceSheetId||'').trim()}
 function parseWarehouseSheetId(raw){
  const v=String(raw||'').trim();
@@ -933,9 +1004,12 @@ async function whLinkSource(){
  if(!id)throw new Error('Dán link Google Sheet đúng định dạng docs.google.com/spreadsheets/d/...');
  // Important: do not repurpose cloudSheetId for externally owned source.
  data.settings.reportSourceSheetId=id;
- await dbSet('settings',data.settings);
- warehouseReport={loaded:false,loading:false,rows:[],months:[],error:'',at:''};
- render();if(cloudIsConnected())await whLoadSource();else toast('Đã nhớ link trên thiết bị. Bấm Kết nối Google để xem báo cáo.');
+  await dbSet('settings',data.settings);
+  let shared=false;
+  if(cloudIsConnected()&&data.settings.cloudSheetId){try{shared=await whSharedWrite('report',id)}catch(e){console.warn('[WorkHub] Báo cáo kho chưa lưu cấu hình chung:',e);toast('Đã lưu trên thiết bị, nhưng chưa lưu cấu hình lên Google: '+e.message,true);}}
+  warehouseReport={loaded:false,loading:false,rows:[],months:[],error:'',at:''};
+  render();if(cloudIsConnected())await whLoadSource();else toast('Đã lưu link tạm trên máy. Hãy kết nối Google để lưu link dùng chung trên các thiết bị.');
+  if(shared)toast('Đã lưu link Báo cáo kho dùng chung trên Google WorkHub.');
 }
 async function whLoadSource(){
  if(warehouseReport.loading||!getWarehouseId())return;
@@ -958,7 +1032,7 @@ async function whLoadSource(){
  }catch(e){warehouseReport.loading=false;warehouseReport.error='Không đọc được Sheet nguồn: '+(e.message||e)+'. Kiểm tra quyền Viewer của Gmail và quyền Sheets readonly trong Google OAuth.';render();toast('Báo cáo kho: '+(e.message||e),true)}
 }
 function whReportConfigure(){
- return `<section class="panel wh-connect"><div class="wh-connect-icon">${whIcon('reports',26)}</div><h2>Liên kết báo cáo kho một lần</h2><p class="muted">Dán link Sheet <b>Báo Cáo Hàng Ngày 2026</b>. WorkHub sẽ nhớ trên trình duyệt, nhưng không đưa link nội bộ lên repository GitHub công khai.</p><form id="whReportLinkForm" class="wh-connect-form"><input id="whReportSourceLink" aria-label="Link Google Sheet báo cáo kho" required placeholder="https://docs.google.com/spreadsheets/d/..." type="url"><button class="primary" type="submit">Liên kết báo cáo</button></form><p class="note">Chỉ đọc hai tab Nhập Liệu và Tổng Hợp Tháng. WorkHub không chỉnh sửa file nguồn.</p></section>`;
+ return `<section class="panel wh-connect"><div class="wh-connect-icon">${whIcon('reports',26)}</div><h2>Liên kết báo cáo kho một lần</h2><p class="muted">Dán link Sheet <b>Báo Cáo Hàng Ngày 2026</b>. WorkHub ghi nhớ vào Sheet dữ liệu WorkHub để dùng chung trên các thiết bị, nhưng không đưa link nội bộ lên repository GitHub công khai.</p><form id="whReportLinkForm" class="wh-connect-form"><input id="whReportSourceLink" aria-label="Link Google Sheet báo cáo kho" required placeholder="https://docs.google.com/spreadsheets/d/..." type="url"><button class="primary" type="submit">Liên kết báo cáo</button></form><p class="note">Chỉ đọc hai tab Nhập Liệu và Tổng Hợp Tháng. WorkHub không chỉnh sửa file nguồn.</p></section>`;
 }
 function renderWarehouseReport(){
  if(!getWarehouseId())return whReportConfigure();
@@ -1303,7 +1377,7 @@ function transferPrintableDocument(rows,code,from,to,requestDate,sendDate,dispat
  @media screen{body{max-width:794px;margin:22px auto;padding:30px 36px;box-shadow:0 2px 20px #0002}.help{padding:9px 12px;background:#ecfdf5;color:#14532d;margin-bottom:18px;border-radius:7px}}
  @media print{.help{display:none}body{padding:0}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
  
-/* 5.7.6.3 · Chip / nail ratios: read-only Google Sheet viewer */
+/* 5.7.6.4 · Chip / nail ratios: read-only Google Sheet viewer */
 .chip-headline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .chip-headline h2{margin:4px 0;font-size:22px;letter-spacing:-.5px}.chip-headline p{margin:0;color:var(--muted);font-size:13px}
 .chip-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
@@ -1473,7 +1547,7 @@ async function transferClickAction(action,el){switch(action){case 'transfer-impo
 // Read-only companion sheet: source URL is stored on this browser, never in the public source.
 const CHIP_LINK_KEY='workhub_chip_sheet_link_v1';
 const chipState={rows:null,title:'',loading:false,loaded:false,error:'',at:''};
-function chipSourceUrl(){try{return localStorage.getItem(CHIP_LINK_KEY)||''}catch{return ''}}
+function chipSourceUrl(){const shared=String(data.settings.chipSourceSheetId||'').trim();if(shared)return 'https://docs.google.com/spreadsheets/d/'+shared+'/edit';try{return localStorage.getItem(CHIP_LINK_KEY)||''}catch{return ''}}
 function chipSheetId(){const raw=chipSourceUrl().trim(),m=raw.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]{18,})/);return m?m[1]:/^[A-Za-z0-9_-]{18,}$/.test(raw)?raw:''}
 function chipParseNumber(v){if(v===undefined||v===null||String(v).trim()==='')return null;let t=String(v).trim().replace(/[^0-9,.\-]/g,'');if(t.includes(',')&&t.includes('.'))t=t.replace(/\./g,'').replace(',','.');else if(t.includes(','))t=t.replace(',','.');else if(/^[-]?\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,'');const n=Number(t);return Number.isFinite(n)?n:null}
 function chipCell(row,col){return chipState.rows?.[row-1]?.[col-1]??''}
@@ -1485,7 +1559,7 @@ function renderChip(){const url=chipSourceUrl(),d=chipData(),connected=cloudIsCo
  const gapClass=d.diff===null?'amber':d.diff===0?'green':'rose';
  return `<section class="panel"><div class="chip-headline"><div><span class="panel-eyebrow">THEO DÕI VẬT TƯ</span><h2>Đinh & Chip</h2><p>Số liệu lấy trực tiếp từ Google Sheets</p></div>${info}</div>
  <div class="chip-source"><label>Liên kết Sheet TỶ LỆ ĐINH CHIP<input id="chipLinkInput" type="url" inputmode="url" placeholder="Dán link Google Sheets ở đây" value="${esc(url)}" autocomplete="off"></label><button type="button" data-action="chip-link">${url?'Lưu link':'Liên kết'}</button><button type="button" class="primary" data-action="chip-refresh" ${!chipSheetId()||!connected||chipState.loading?'disabled':''}>↻ Làm mới</button>${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ Mở Sheet gốc</a>`:''}</div>
- <div class="chip-meta">${ready?'Nguồn: '+esc(chipState.title||'Google Sheet')+' · Cập nhật lúc '+esc(chipState.at):'Dán link từ thanh địa chỉ Google Sheets, chỉ cần một lần trên thiết bị này.'}${!connected?' · Bấm Kết nối Google ở đầu trang để đọc.':''}</div>
+ <div class="chip-meta">${ready?'Nguồn: '+esc(chipState.title||'Google Sheet')+' · Cập nhật lúc '+esc(chipState.at):'Liên kết một lần, dùng chung với các thiết bị đã kết nối WorkHub.'}${!connected?' · Bấm Kết nối Google ở đầu trang để đọc.':''}</div>
  ${chipState.error?`<div class="banner warn">${esc(chipState.error)}</div>`:''}
  ${!ready?`<div class="empty"><b>${url?'Chưa tải được dữ liệu':'Chưa liên kết Sheet'}</b>${url?'Bấm Kết nối Google rồi chọn Làm mới.':'Sheet gốc không bị thay đổi; WorkHub chỉ đọc số liệu.'}</div>`:`
  <div class="chip-top"><div class="chip-tile blue"><span>Chip</span><b>${chipFmt(d.chip.qty)}</b><small>${chipFmt(d.chip.weight,'g')}</small></div><div class="chip-tile green"><span>Tổng đinh</span><b>${chipFmt(d.nails)}</b><small>Sắt · Nhựa · Đầu bự</small></div><div class="chip-tile ${gapClass}"><span>Chênh lệch theo Sheet</span><b>${d.diff!==null&&d.diff>0?'+':''}${chipFmt(d.diff)}</b><small>${d.diff===0?'Đã cân đối':d.diff===null?'Chưa có số liệu': 'Cần đối chiếu'}</small></div></div>
@@ -1494,7 +1568,7 @@ function renderChip(){const url=chipSourceUrl(),d=chipData(),connected=cloudIsCo
  <section class="panel"><div class="panel-head"><h2>Đợt trước & đối chiếu</h2></div><div class="chip-note"><div>Thiếu đinh đợt trước <strong style="float:right">${chipFmt(d.missingNail)}</strong></div><div>Thiếu chip đợt trước <strong style="float:right">${chipFmt(d.missingChip)}</strong></div><div>Chênh lệch <strong style="float:right">${chipFmt(d.diff)}</strong></div></div><div class="chip-summary">Số lượng và chênh lệch hiển thị đúng theo Sheet nguồn, không tự sửa công thức. ${totalKnown?'Chip '+chipFmt(d.chip.qty)+' · Đinh '+chipFmt(d.nails)+'.':''}</div>${[3,4,5,6].some(i=>String(chipCell(i,5)).trim())?`<details class="chip-ratios" style="margin-top:15px"><summary>Định mức quy đổi từ Sheet</summary><div class="chip-note" style="padding-top:10px">${[3,4,5,6].map(i=>chipCell(i,5)).filter(x=>String(x).trim()).map(x=>`<div>${esc(x)}</div>`).join('')}</div></details>`:''}</section></div>`}
  </section>`;
 }
-async function chipSaveLink(){const value=String($('chipLinkInput')?.value||'').trim();const m=value.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]{18,})/);if(!m)throw new Error('Hãy dán đúng đường link Google Sheets (có /spreadsheets/d/...).');const canonical='https://docs.google.com/spreadsheets/d/'+m[1]+'/edit';try{localStorage.setItem(CHIP_LINK_KEY,canonical)}catch{throw new Error('Trình duyệt không cho lưu cấu hình link Sheet.')}chipState.rows=null;chipState.loaded=false;chipState.error='';render();toast('Đã lưu liên kết Sheet. WorkHub sẽ chỉ đọc dữ liệu.');if(cloudIsConnected())await chipRefresh()}
+async function chipSaveLink(){const value=String($('chipLinkInput')?.value||'').trim();const m=value.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]{18,})/);if(!m)throw new Error('Hãy dán đúng đường link Google Sheets (có /spreadsheets/d/...).');const canonical='https://docs.google.com/spreadsheets/d/'+m[1]+'/edit';data.settings.chipSourceSheetId=m[1];await dbSet('settings',data.settings);try{localStorage.setItem(CHIP_LINK_KEY,canonical)}catch{}let shared=false;if(cloudIsConnected()&&data.settings.cloudSheetId){try{shared=await whSharedWrite('chip',m[1])}catch(e){console.warn('[WorkHub] Đinh Chip chưa lưu cấu hình chung:',e);toast('Link đã lưu trên máy nhưng chưa đồng bộ cấu hình: '+e.message,true)}}chipState.rows=null;chipState.loaded=false;chipState.error='';render();toast(shared?'Đã lưu liên kết Đinh & Chip dùng chung trên Google.':'Đã lưu link trên máy. Kết nối Google để dùng chung giữa các thiết bị.');if(cloudIsConnected())await chipRefresh()}
 async function chipRefresh({silent=false}={}){if(chipState.loading)return;const id=chipSheetId();if(!id){if(!silent)toast('Dán link Sheet ở phần liên kết trước.',true);return}if(!cloudIsConnected()){chipState.error='Google chưa kết nối. Bấm Kết nối Google rồi Làm mới.';if(page==='chip')render();return}chipState.loading=true;chipState.error='';if(page==='chip'&&!silent)render();try{
  const base='https://sheets.googleapis.com/v4/spreadsheets/'+encodeURIComponent(id);
  const meta=await cloudRequest(base+'?fields=properties(title),sheets(properties(sheetId,title,index))');
@@ -1552,7 +1626,7 @@ function safeCsvCell(v){let t=String(v??'');if(/^[=+@\-]/.test(t.trimStart()))t=
 function download(file,name,type='application/octet-stream'){const blob=file instanceof Blob?file:new Blob([file],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
 function exportCsv(k){const list=k==='stock'?data.stock:k==='counts'?data.counts.filter(x=>!x.meta):data[k]||[];if(!list.length){toast('Chưa có dữ liệu để xuất',true);return}const headers=k==='mistakes'?['date','orderCode','channel','errorType','detail','pic','handler','returnFee','reshipFee','otherFee','totalCost','status','note','evidence']:k==='stock'?['warehouse','product','variant','sku','barcode','available','stock','ordered','incoming','size','code']:k==='counts'?['batch','time','warehouse','product','sku','barcode','size','user','expected','actual','difference','source']:k==='returns'?['time','orderCode','user','channel','result','status','note','videoName']:Object.keys(list[0]).filter(x=>!['id','createdAt','updatedAt'].includes(x));const csv='\uFEFF'+[headers.join(','),...list.map(x=>headers.map(h=>safeCsvCell(h==='totalCost'?costOf(x):x[h])).join(','))].join('\r\n');download(csv,`WorkHub_${k}_${today()}.csv`,'text/csv;charset=utf-8')}
 async function backup(){
- const at=new Date(),payload={app:'WorkHub',version:'5.7.6.3',exportedAt:at.toISOString(),data};
+ const at=new Date(),payload={app:'WorkHub',version:'5.7.6.4',exportedAt:at.toISOString(),data};
  const suffix=at.toTimeString().slice(0,8).replaceAll(':','');
  download(JSON.stringify(payload,null,2),`WorkHub_Backup_${today()}_${suffix}.json`,'application/json');
  data.settings.lastBackupAt=at.toISOString();await dbSet('settings',data.settings);
@@ -1760,8 +1834,13 @@ async function cloudAutoDiscover(){
  try{const found=(await cloudJson(endpoint)).files||[];
   const sheets=found.filter(f=>f.name==='WorkHub - Dữ liệu cá nhân'&&f.mimeType==='application/vnd.google-apps.spreadsheet');
   const folders=found.filter(f=>f.name==='WorkHub - Video hàng hoàn'&&f.mimeType==='application/vnd.google-apps.folder');
-  if(sheets.length!==1||folders.length!==1){cloudStatus('Không tự nhận diện được duy nhất Sheet/Drive cũ. Liên kết một lần trong Cài đặt.');return false}
-  data.settings.cloudSheetId=sheets[0].id;data.settings.cloudDriveFolderId=folders[0].id;data.settings.cloudRevs={};await cloudSaveConfig();cloudUpdateLinks();return true;
+  if(sheets.length!==1){cloudStatus('Không nhận diện được duy nhất Sheet WorkHub. Liên kết một lần trong Cài đặt.');return false}
+  data.settings.cloudSheetId=sheets[0].id;
+  data.settings.cloudDriveFolderId=folders.length===1?folders[0].id:'';
+  try{await whSharedLoad({seedLocal:false})}catch(e){console.warn('[WorkHub] Đọc liên kết Drive từ Sheet:',e)}
+  data.settings.cloudRevs={};await cloudSaveConfig();cloudUpdateLinks();
+  if(!data.settings.cloudDriveFolderId)cloudStatus('Đã tìm được Sheet WorkHub. Hãy liên kết thư mục Drive một lần ở Cài đặt.');
+  return true;
  }catch(e){console.warn('[WorkHub] Auto-discovery unavailable',e);return false}
 }
 async function cloudDriveModifiedTime(){
@@ -1772,7 +1851,7 @@ async function cloudSmartRefresh(options={}){
  if(!cloudIsConnected()||!data.settings.cloudSheetId||cloudRefreshBusy||cloudSyncBusy||cloudBusy||cloudBlocked)return false;
  cloudRefreshBusy=true;
  try{
-  const revs=await cloudGetRevs();await transferReadSourceFromCloud(revs);let changed=0;
+  const revs=await cloudGetRevs();await transferReadSourceFromCloud(revs);if(Date.now()-whSharedLinksLastRead>4*60*1000){try{await whSharedLoad({seedLocal:false})}catch(e){console.warn('[WorkHub] Đọc liên kết nguồn:',e)}}let changed=0;
   const auditDue=Boolean(options.force)||Date.now()-cloudAuditAt>=CLOUD_AUDIT_MS;
   const driveTime=await cloudDriveModifiedTime();
   const driveChanged=!!driveTime&&(!cloudLastDriveStamp||driveTime!==cloudLastDriveStamp);
@@ -1816,7 +1895,7 @@ function cloudStartPeriodic(){if(cloudPeriodic)clearInterval(cloudPeriodic);clou
  },CLOUD_REFRESH_MS)}
 
 let cloudToken='', cloudExpiry=0, cloudClient=null, cloudLoginPending=false, cloudExpiryTimer=null, cloudBusy=false, cloudSyncBusy=false, cloudBlocked=false, cloudSyncTimer=null, cloudStatusText='Chưa kết nối', cloudDirty=new Set();
-// 5.7.6.3 · Manual Google connection only (no automatic OAuth popup).
+// 5.7.6.4 · Manual Google connection only (no automatic OAuth popup).
 const cloudValue=(k,x)=>k==='totalCost'?costOf(x):x[k]??'';
 function cloudStatus(msg,isError=false){
  cloudStatusText=msg;
@@ -1937,7 +2016,7 @@ async function cloudPreflight(){
  const info=await cloudJson(base+'?fields=sheets(properties(title,sheetId,gridProperties(rowCount,columnCount)))');
  const names=new Set((info.sheets||[]).map(s=>s.properties.title));
  if([...CLOUD_KEYS.map(k=>CLOUD_TABLES[k].name),'WH_META'].some(n=>!names.has(n)))throw new Error('Sheet thiếu cấu trúc WorkHub. Không tạo lại hay ghi đè dữ liệu.');
- const current=await cloudGetRevs();await transferReadSourceFromCloud(current);
+ const current=await cloudGetRevs();await transferReadSourceFromCloud(current);try{await whSharedLoad({seedLocal:true})}catch(e){console.warn('[WorkHub] Chưa khôi phục được cấu hình Sheet dùng chung:',e);toast('Chưa đọc được liên kết báo cáo từ Google: '+e.message,true)}
  for(const k of cloudDirty){
    const last=String((data.settings.cloudRevs||{})[k]||'');
    if(k==='stock'&&String(current[k]||'')!==last){cloudBlocked=true;break}
