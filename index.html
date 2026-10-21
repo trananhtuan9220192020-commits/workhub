@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 5.7.6.7 · Neo Minimal</title>
+<title>WorkHub 5.7.6.8 · Refined Workspace</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
@@ -317,7 +317,7 @@ body[data-theme=dark] .chip-screen{--chip-line:#35405b}body[data-theme=dark] .ch
 @media(max-width:800px){.chip-screen .chip-main{padding:18px}.chip-header{align-items:flex-start}.chip-summary{gap:8px}.chip-summary-card{padding:13px;min-height:104px}.chip-summary-card strong{font-size:26px}.chip-summary-glyph{padding:5px}.chip-table-head,.chip-entry-row{grid-template-columns:minmax(145px,1.2fr) repeat(2,minmax(108px,1fr));column-gap:9px}.chip-entry-row,.chip-table-head{padding-inline:12px}.chip-carry{flex-wrap:wrap}.chip-carry-fields{flex:1 1 100%}}
 @media(max-width:590px){.chip-screen .chip-main{padding:15px!important}.chip-header{gap:9px}.chip-header h2{font-size:23px}.chip-header-actions{width:100%;justify-content:flex-end}.chip-header-actions>*{min-height:35px;padding:6px 10px!important;font-size:11px!important}.chip-summary-card{padding:12px 11px;min-height:92px}.chip-summary-card strong{font-size:24px}.chip-summary-card .chip-summary-glyph{display:none}.chip-summary-tag{font-size:9px;letter-spacing:.5px}.chip-summary-card small{font-size:10px}.chip-entry-head{padding:14px 12px 12px}.chip-entry-head h3{font-size:15px}.chip-entry-head p{font-size:10px}.chip-sheet-safe{font-size:9px}.chip-table-head{display:none}.chip-entry-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:10px;column-gap:11px;padding:13px 12px}.chip-entry-name{grid-column:1/-1}.chip-entry-icon{width:31px;height:31px;flex-basis:31px;border-radius:9px;font-size:16px}.chip-mobile-label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px}.chip-cell-input input{height:42px!important;min-height:42px!important}.chip-carry{padding:13px 12px}.chip-carry-title h3{font-size:12px}.chip-savebar{position:static;bottom:auto}.chip-savebar button{padding:9px 12px!important;min-height:40px!important}.chip-save-message{font-size:11px}.chip-extra-grid{grid-template-columns:1fr}.chip-source-flex{flex-wrap:wrap}.chip-source-flex button{width:100%}}
 
-/* WorkHub 5.7.6.7 · NEO MINIMAL DARK · a unified design system */
+/* WorkHub 5.7.6.8 · NEO MINIMAL DARK · a unified design system */
 :root{--font:'Be Vietnam Pro',Inter,system-ui,sans-serif}
 body,button,input,select,textarea{font-family:var(--font)!important}
 body{font-size:13px;letter-spacing:-.012em}
@@ -542,17 +542,68 @@ body[data-theme=dark] .chip-metric.purple{background:#29264f;border-color:#48407
 @media(max-width:610px){.chip-edit-grid,.chip-bottom-grid,.chip-ratio-grid{grid-template-columns:1fr}.chip-item-fields,.chip-side-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.chip-metric{padding:13px;min-height:95px;gap:9px}.chip-metric-icon{width:32px;height:32px;flex-basis:32px;font-size:19px}.chip-metric strong{font-size:22px}.chip-screen .chip-main{padding:15px}.chip-settings-inner{display:grid;grid-template-columns:1fr}.chip-edit-field input{padding:8px 10px;font-size:15px}}
 
 </style>
+<style>
+
+/* 5.7.6.8 · Refined enterprise shell — visuals only; preserve module behavior */
+:root{--wh-accent:#8774ff;--wh-border:#2a3650}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{line-height:1.52;font-feature-settings:'tnum' 1;letter-spacing:-.008em}
+body[data-theme=dark]{--bg:#0b1120;--surface:#131b2e;--ink:#eff3fb;--muted:#9baac4;--line:#2a3550;--pale:#1a2842;--green:#8976ff;--deep:#0e172a;--shadow:none;background:#0b1120}
+.app{grid-template-columns:235px minmax(0,1fr)}.workspace{padding:0 clamp(18px,2.5vw,38px) 46px!important;max-width:1560px!important}
+.side{padding:19px 13px!important}.logo{padding:8px 9px 20px!important;margin-bottom:9px!important}.logo-title{font-size:19px!important}.logo small{font-size:10px!important;letter-spacing:.2px!important}
+.navigation{gap:2px!important}.navigation button{min-height:42px!important;padding:9px 11px!important;font-size:12.5px!important;font-weight:600;border-radius:10px!important;gap:11px!important}.navgroup{font-size:9px!important;letter-spacing:1.15px!important;margin:17px 9px 5px!important}
+.topbar{min-height:91px!important;margin-bottom:19px!important;gap:12px}.topbar h1{font-size:clamp(21px,2vw,27px)!important;letter-spacing:-.8px!important;line-height:1.26}.topbar p{font-size:12px;margin-top:3px}.overline{font-size:9px!important;letter-spacing:1px!important;margin-bottom:2px!important}
+.topright{gap:7px!important}.topright button,.topright .cloud-pill{font-size:12px!important}.topright button{min-height:38px!important}
+.panel{padding:19px!important;border-radius:15px!important;margin-bottom:14px!important;box-shadow:none!important}.panel-head{margin-bottom:12px!important}.panel-head h2{font-size:16px!important;letter-spacing:-.45px!important}
+.panel h3{letter-spacing:-.3px}.panel-eyebrow{font-size:9px!important;letter-spacing:.95px!important}
+button,.primary{min-height:38px!important;font-size:12px!important;border-radius:10px!important;padding:8px 13px;font-weight:650}
+button.small{min-height:34px!important;padding:6px 10px!important}button:focus-visible{outline:2px solid #958aff;outline-offset:2px}
+input,select,textarea{min-height:40px!important;font-size:12.5px!important;padding:9px 11px!important;border-radius:9px!important}label{font-size:11.5px!important;gap:5px!important}
+.tablewrap td,.tablewrap th{padding:10px 12px!important;font-size:12px!important;line-height:1.5}th{font-weight:650!important;letter-spacing:.01em}
+.cards,.home-metrics{gap:12px!important}.stat{padding:17px!important;box-shadow:none!important}.stat strong{font-size:27px!important}
+body[data-theme=dark] .side{background:#0d1528!important;border-color:#26324b!important}
+body[data-theme=dark] .panel,body[data-theme=dark] .stat,body[data-theme=dark] .home-block{background:#141e32!important;border-color:#283650!important}
+body[data-theme=dark] input,body[data-theme=dark] select,body[data-theme=dark] textarea{background:#1a263e!important;border-color:#34435f!important}
+body[data-theme=dark] .topbar{border-color:#25334a!important}
+body[data-theme=dark] .primary,body[data-theme=dark] button.primary{background:#7868ec!important;border-color:#7868ec!important;color:#fff!important}
+body[data-theme=dark] .navigation button.active{background:#302c59!important;border-color:#514b9e!important}
+.transfer-workspace{max-width:100%}.transfer-workspace .panel{padding:20px!important}
+.transfer-simple-hero{margin-bottom:12px!important}.transfer-simple-hero .panel-head{margin-bottom:10px!important}
+.transfer-simple-hero .panel-head .muted,.transfer-simple-steps,.transfer-prepare>.transfer-helper,.transfer-archive .transfer-section-heading .note{display:none!important}
+.transfer-selector-grid{margin-top:13px!important;gap:10px!important}.transfer-selector-grid label{font-size:11px!important}
+.transfer-section-heading{align-items:center!important;gap:10px!important}.transfer-section-heading h2{font-size:17px!important}
+.transfer-three-numbers{gap:10px!important;margin:13px 0 17px!important}.transfer-three-numbers>div{padding:13px 15px!important;border-radius:12px!important}.transfer-three-numbers b{font-size:22px!important;line-height:1.4!important}
+.transfer-prep-heading{margin:12px 0!important}.transfer-prep-heading h3{font-size:15px!important}
+.transfer-prep-table td{vertical-align:middle!important}.transfer-prep-table input{max-width:118px}
+.transfer-batch-evidence{margin:17px 0 12px;border:1px solid var(--line);border-radius:14px;padding:17px;background:var(--surface);min-width:0}
+.transfer-evidence-heading,.transfer-evidence-heading>div{display:flex;align-items:center;gap:11px}.transfer-evidence-heading{justify-content:space-between;flex-wrap:wrap}.transfer-evidence-heading h3{font-size:14px!important;margin:0;font-weight:750}.transfer-evidence-heading p{font-size:11.5px;color:var(--muted);margin:4px 0 0}
+.transfer-label-icon{height:38px;width:38px;border-radius:11px;background:#7763e722;color:#a699ff;display:grid;place-items:center;flex:none}
+.transfer-count-bubble{border-radius:18px;background:var(--pale);color:var(--muted);font-size:11px;font-weight:700;padding:6px 10px;white-space:nowrap}
+.transfer-evidence-controls{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:13px}.transfer-evidence-controls small{color:var(--muted);font-size:11px;flex:1;min-width:100px;overflow-wrap:anywhere}
+.transfer-evidence-controls .primary{display:inline-flex;align-items:center;gap:8px}.transfer-photo-choose{position:relative;display:inline-flex;gap:8px;align-items:center;font-size:12px!important;border-radius:10px;min-height:38px!important}
+.transfer-photo-links{margin-top:12px}.transfer-photo-links a{font-size:11.5px!important;max-width:240px!important}
+.transfer-photo-state{display:block;margin-top:9px;line-height:1.5}.transfer-savebar{margin-top:14px!important;gap:10px!important;flex-wrap:wrap}
+.transfer-savebar .note{font-size:11px!important}.transfer-history-filter{gap:9px!important}
+body[data-theme=dark] .transfer-batch-evidence{background:#172239;border-color:#33415c}
+body[data-theme=dark] .transfer-count-bubble{background:#253250;color:#c1cce0}
+/* Tighten secondary explanations while keeping feedback and safety warnings visible */
+.dashboard-hero .muted,.settings-intro p,.camera-help{font-size:11.5px!important}
+.chip-screen .chip-main{padding:17px!important}.chip-entry-row{gap:9px!important}
+@media(max-width:900px){.app{grid-template-columns:88px minmax(0,1fr)}}
+@media(max-width:750px){.workspace{padding:0 12px 58px!important}.topbar{min-height:74px!important;gap:8px!important;padding:13px 0!important}.topbar h1{font-size:21px!important}.topbar p{font-size:11px!important}.panel,.transfer-workspace .panel{padding:14px!important}.transfer-section-heading{align-items:flex-start!important}.transfer-three-numbers{gap:7px!important}.transfer-three-numbers>div{padding:10px!important}.transfer-three-numbers b{font-size:19px!important}.transfer-evidence-controls .primary{width:100%;justify-content:center}.transfer-batch-evidence{padding:12px!important}.transfer-evidence-heading p{font-size:10.5px}.transfer-label-icon{height:34px;width:34px}.transfer-selector-grid{gap:8px!important}}
+
+</style>
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.6.7</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.6.8</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
   <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB <span class="wh-spark">✦</span> DAILY SPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Tất cả công việc, trong một nơi</p></div><div class="topright"><button class="wh-command" type="button" data-action="quick-open" title="Tìm nhanh chức năng · Ctrl+K" aria-label="Mở tìm nhanh">⌕ <span>Tìm nhanh</span><kbd>⌘K</kbd></button><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.7.6.7 · Neo Minimal</div>
+  <div class="footerline">WorkHub 5.7.6.8 · Neo Minimal</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
@@ -1174,7 +1225,9 @@ function transferImportRows(rows){
  if(!found.length)throw new Error('Không có dòng Kho Onl ↔ cửa hàng hợp lệ trong file. Kiểm tra cột Kho xuất, Kho nhận, mã 4 số và size.');
  return {rows:found,skipped};
 }
-function transferShipmentEntries(x){try{const parsed=typeof x.shipments==='string'?JSON.parse(x.shipments||'[]'):(x.shipments||[]);return Array.isArray(parsed)?parsed.filter(v=>v&&v.id&&!v.voided):[]}catch{return []}}
+function transferAllShipmentEntries(x){try{const parsed=typeof x.shipments==='string'?JSON.parse(x.shipments||'[]'):(x.shipments||[]);return Array.isArray(parsed)?parsed.filter(v=>v&&v.id&&!v.voided):[]}catch{return []}}
+function transferBatchProofEntries(x){return transferAllShipmentEntries(x).filter(v=>v.type==='batch-proof')}
+function transferShipmentEntries(x){return transferAllShipmentEntries(x).filter(v=>v.type!=='batch-proof')}
 function transferEntriesWithLegacy(x){const entries=transferShipmentEntries(x);if(!entries.length&&transferInt(x.sent)>0)return [{id:'legacy-'+x.id,group:'legacy-'+x.batch,date:x.date||'',qty:transferInt(x.sent),legacy:true,note:'Số đã lưu trước 5.7.5, cần đối soát'}];return entries}
 function transferSentTotal(x){return transferEntriesWithLegacy(x).reduce((n,v)=>n+transferInt(v.qty),0)}
 function transferPending(x){return Math.max(0,transferInt(x.proposed)-transferSentTotal(x))}
@@ -1238,17 +1291,64 @@ function transferAutoNumber(row,dispatch){const date=(dispatch?.date||row.date||
 function transferTrackSent(x){return Math.max(transferInt(x.sourceSent),transferSentTotal(x))}
 function transferTrackPending(x){return Math.max(0,transferInt(x.proposed)-transferTrackSent(x))}
 // Neo Minimal · Hình phiếu giấy, gắn theo MÃ NHÓM LẦN GỬI (không phải mã đề xuất).
-let transferPrepPhotos=[],transferArchivePhotos=[],transferPhotoUploading=false;
+let transferPrepPhotos=[],transferArchivePhotos=[],transferPhotoUploading=false,transferPrepBatchKey='';
 let transferPhotoProgress='',transferPhotoPercent=0;
-const TRANSFER_MAX_IMAGES=8,TRANSFER_IMAGE_LIMIT=12*1024*1024;
+const TRANSFER_MAX_IMAGES=24,TRANSFER_IMAGE_LIMIT=12*1024*1024;
+function transferProofKey(rows){if(!rows?.length)return '';const r=rows[0];return [r.batch,r.date,transferWarehouseKey(r.from),transferWarehouseKey(r.to)].join('|')}
+function transferBatchPhotos(rows){const key=transferProofKey(rows),map=new Map();for(const x of rows||[])for(const e of transferBatchProofEntries(x))if(e.proofKey===key)for(const photo of e.photos||[])if(photo?.id)map.set(photo.id,photo);return [...map.values()]}
 function transferPhotoSelect(input,kind){
- const files=[...(input?.files||[])];
- if(files.length>TRANSFER_MAX_IMAGES)throw new Error('Tối đa '+TRANSFER_MAX_IMAGES+' ảnh cho mỗi lần chọn.');
- for(const file of files){if(!file.type.startsWith('image/')&&!/\.(?:jpe?g|png|webp|heic|heif)$/i.test(file.name))throw new Error('Chỉ nhận ảnh JPG, PNG, WEBP hoặc HEIC.');if(file.size>TRANSFER_IMAGE_LIMIT)throw new Error('Ảnh '+file.name+' quá 12 MB. Hãy giảm dung lượng trước khi tải.');if(!file.size)throw new Error('Ảnh trống: '+file.name)}
- if(kind==='archive')transferArchivePhotos=files;else transferPrepPhotos=files;
- const dest=kind==='archive'?'transferArchiveSelection':'transferPrepSelection';const out=$(dest);
- if(out)out.textContent=files.length?files.length+' ảnh đã chọn · '+files.map(x=>x.name).join(', '):'Chưa chọn ảnh';
+ const files=[...(input?.files||[])];if(!files.length)return;
+ const archive=kind==='archive';const old=archive?transferArchivePhotos:transferPrepPhotos;
+ const selectedKey=archive?'':transferProofKey(transferBatchRows());
+ if(!archive&&!selectedKey)throw new Error('Chọn một đợt đề xuất trước.');
+ if(!archive&&transferPrepBatchKey&&transferPrepBatchKey!==selectedKey)old.length=0;
+ const all=[...old];for(const file of files){
+  if(!file.type.startsWith('image/')&&!/\.(?:jpe?g|png|webp|heic|heif)$/i.test(file.name))throw new Error('Chỉ nhận ảnh JPG, PNG, WEBP hoặc HEIC.');
+  if(file.size>TRANSFER_IMAGE_LIMIT||!file.size)throw new Error('Ảnh '+file.name+' không hợp lệ hoặc quá 12 MB.');
+  if(!all.some(x=>x.name===file.name&&x.size===file.size&&x.lastModified===file.lastModified))all.push(file);
+ }
+ if(all.length>TRANSFER_MAX_IMAGES)throw new Error('Tối đa '+TRANSFER_MAX_IMAGES+' ảnh mỗi đợt.');
+ if(archive)transferArchivePhotos=all;else{transferPrepPhotos=all;transferPrepBatchKey=selectedKey}
+ const out=$(archive?'transferArchiveSelection':'transferPrepSelection');if(out)out.textContent=all.length+' ảnh đã chọn · '+all.map(v=>v.name).join(', ');
+ input.value='';
 }
+function transferClearPrep(){transferPrepPhotos=[];transferPrepBatchKey='';transferPhotoProgress='';render()}
+async function transferUploadBatchPhotos(){
+ if(transferPhotoUploading)throw new Error('Đang tải ảnh, vui lòng đợi.');
+ const batch=transferBatchRows(),key=transferProofKey(batch);if(!batch.length)throw new Error('Chọn đợt luân chuyển trước.');
+ if(!transferPrepPhotos.length)throw new Error('Chọn ít nhất một ảnh phiếu.');
+ if(transferPrepBatchKey!==key)throw new Error('Bạn đã đổi đợt. Hãy chọn ảnh lại cho đúng phiếu.');
+ if(!cloudIsReady())throw new Error('Hãy Kết nối Google và liên kết thư mục Drive của WorkHub. Không cần nhập Thực gửi.');
+ if(cloudBlocked||cloudDirty.has('transfers'))throw new Error('Lịch sử luân chuyển còn chờ đồng bộ. Hãy đồng bộ trước khi thêm ảnh.');
+ const files=[...transferPrepPhotos],prevPhotos=transferBatchPhotos(batch);
+ if(prevPhotos.length+files.length>TRANSFER_MAX_IMAGES)throw new Error('Một đợt lưu tối đa '+TRANSFER_MAX_IMAGES+' ảnh. Đã có '+prevPhotos.length+' ảnh.');
+ const first=batch[0],proofId='WH-PROOF-'+transferHash(key),nameBase='Phieu_'+transferAutoNumber(first).replace(/[^A-Za-z0-9_-]/g,'');
+ transferPhotoUploading=true;transferPhotoProgress='Đang tải ảnh…';transferPhotoPercent=0;render();
+ let complete=0;
+ try{
+  for(let i=0;i<files.length;i++){
+   const f=files[i],fingerprint=[f.name,f.size,f.lastModified].join('|');
+   if(transferBatchPhotos(batch).some(v=>v.fingerprint===fingerprint)){complete++;transferPhotoProgress='Đã bỏ qua ảnh trùng '+f.name;continue;}
+   const current=transferBatchPhotos(batch);if(current.length>=TRANSFER_MAX_IMAGES)throw new Error('Đợt đã đủ '+TRANSFER_MAX_IMAGES+' ảnh.');
+   const suffix=f.name.match(/\.(jpe?g|png|webp|heic|heif)$/i)?.[0]||'.jpg';
+   const fileName=nameBase+'_trang_'+(current.length+1)+suffix;
+   const uploaded=await cloudUploadVideo(f,fileName,(loaded,total)=>{transferPhotoPercent=Math.round(100*(complete+(total?loaded/total:0))/files.length);transferPhotoProgress='Đang tải '+(i+1)+'/'+files.length+' · '+transferPhotoPercent+'%';const label=$('transferPhotoState');if(label)label.textContent=transferPhotoProgress});
+   if(!uploaded?.id)throw new Error('Drive chưa xác nhận ảnh '+f.name);
+   // Keep metadata per source proposal, not per quantity-dispatch. No new Sheet columns.
+   const entries=transferAllShipmentEntries(first),existing=entries.find(v=>v.id===proofId&&v.type==='batch-proof'&&v.proofKey===key);
+   const item={id:uploaded.id,name:f.name,size:f.size,at:new Date().toISOString(),fingerprint};
+   if(existing)existing.photos=[...(existing.photos||[]),item];
+   else entries.push({id:proofId,type:'batch-proof',proofKey:key,photos:[item],at:new Date().toISOString()});
+   first.shipments=JSON.stringify(entries);first.updatedAt=new Date().toISOString();
+   await persist('transfers'); // Retain successful Drive upload reference even when Sheets is temporarily unavailable.
+   try{await cloudFlush()}catch(err){throw new Error('Ảnh đã lên Drive và lưu tạm trên máy, nhưng Sheets chưa xác nhận: '+(err.message||err))}
+   if(cloudDirty.has('transfers')||cloudBlocked)throw new Error('Ảnh đã lên Drive nhưng Sheet chưa xác nhận. Đồng bộ lại trước khi tiếp tục; không tải ảnh đã lưu lần nữa.');
+   complete++;transferPrepPhotos=transferPrepPhotos.filter(x=>x!==f);
+  }
+  transferPrepBatchKey='';transferPhotoPercent=100;transferPhotoProgress='Đã lưu '+complete+' ảnh cho đợt đề xuất';toast('Đã lưu ảnh phiếu theo đợt luân chuyển. Không cần nhập Thực gửi.');
+ }finally{transferPhotoUploading=false;if(page==='transfers')render()}
+}
+
 function transferPhotoRef(ph){return 'https://drive.google.com/file/d/'+encodeURIComponent(ph.id)+'/view'}
 function transferPhotoThumbs(photos){return !photos.length?'<span class="note">Chưa có ảnh phiếu.</span>':`<div class="transfer-photo-links">${photos.map((x,i)=>`<a href="${esc(transferPhotoRef(x))}" rel="noopener noreferrer" target="_blank" title="Xem ảnh trên Google Drive">${whIcon('link',14)} Ảnh ${i+1}<small>${esc(x.name||'Phiếu luân chuyển')}</small></a>`).join('')}</div>`}
 async function transferAttachPhotosToGroup(group,files,source){
@@ -1278,7 +1378,7 @@ async function transferAttachPhotosToGroup(group,files,source){
    if(!result?.id)throw new Error('Google Drive chưa xác nhận lưu ảnh.');
    // Cập nhật chính dòng lịch sử của nhóm; dữ liệu nhị phân nằm trên Drive, Sheet chỉ chứa ID ảnh.
    const photo={id:result.id,name:file.name,size:file.size,at:new Date().toISOString(),fingerprint};
-   const obj=first.x;const entries=transferShipmentEntries(obj);
+   const obj=first.x;const entries=transferAllShipmentEntries(obj);
    const match=entries.find(e=>e.id===first.e.id);
    if(!match)throw new Error('Dữ liệu lần gửi bị thay đổi trong khi tải ảnh. Ảnh đã lên Drive: '+result.id);
    match.photos=[...(Array.isArray(match.photos)?match.photos:[]),photo];
@@ -1349,19 +1449,22 @@ function renderTransfers(){
  const shops=[...new Set(histAll.flatMap(h=>[h.from,h.to]).filter(x=>!isOnlineWarehouse(x)))].sort((a,b)=>a.localeCompare(b,'vi'));
  const historyView=history.find(h=>h.id===transferHistorySelected);
  return `<div class="transfer-workspace transfer-v574">
- <section class="panel transfer-simple-hero"><div class="panel-head"><div><span class="panel-eyebrow">LUÂN CHUYỂN ONLINE ↔ CỬA HÀNG</span><h2>Phiếu soạn hàng</h2><p class="muted">Chọn đề xuất từ Sheet → In phiếu trống → Điền số thực gửi → Lưu vào lịch sử WorkHub.</p></div><span class="badge info">${number((data.transfers||[]).length)} mã đề xuất</span></div>
- <div class="transfer-simple-steps"><span><b>1</b> Chọn đề xuất</span><span><b>2</b> In phiếu soạn</span><span><b>3</b> Lưu thực gửi</span></div>
+ <section class="panel transfer-simple-hero"><div class="panel-head"><div><span class="panel-eyebrow">LUÂN CHUYỂN ONLINE ↔ CỬA HÀNG</span><h2>Luân chuyển hàng</h2></div><span class="badge info">${number((data.transfers||[]).length)} mã đề xuất</span></div>
+ 
  <div class="transfer-selector-grid"><label>Kho xuất<select id="transferFrom">${transferOpt(origins,transferFrom)}</select></label><label>Kho nhận<select id="transferTo">${transferOpt(availableTos,transferTo)}</select></label><label>Ngày đề xuất<select id="transferRequestDate">${transferOpt(dates,transferRequestDate,viDate)}</select></label><label>Phiếu / Nhóm đề xuất<select id="transferBatch">${transferOpt(batches,transferBatch,v=>v.startsWith('TAM-')?'Đề xuất ngày '+viDate(transferRequestDate):v)}</select></label></div>
  <div class="transfer-source-line"><span class="transfer-dot ${linked?'active':''}"></span><span>${linked?esc(transferSourceStatus||'Nguồn đã liên kết · Kiểm tra tự động khi web mở'):'Chưa liên kết Sheet luân chuyển'}</span><button type="button" class="small" data-action="transfer-refresh" ${!linked||transferSourceBusy?'disabled':''}>↻ Cập nhật từ Sheet</button><details class="transfer-source-settings"><summary>Thiết lập nguồn (chỉ làm một lần)</summary><div class="transfer-source-settings-inner"><p class="note">Chỉ đọc Sheet luân chuyển gốc; lịch sử gửi được lưu trong dữ liệu WorkHub riêng.</p><input id="transferSourceUrl" placeholder="Link Google Sheets / Excel trên Drive" value="${esc(url)}"><div class="flex"><button type="button" class="small" data-action="transfer-link">Liên kết nguồn</button><button type="button" class="small" data-action="transfer-source-auth">Cấp quyền đọc Excel Drive</button></div><details><summary>Nhập Excel thủ công (dự phòng)</summary><div class="transfer-import"><input id="transferFile" type="file" accept=".xlsx,.xls,.csv"><button type="button" class="small" data-action="transfer-import">Nhập file</button></div></details></div></details></div></section>
  ${!(data.transfers||[]).length?'<section class="panel"><div class="empty">Chưa có phiếu đề xuất. Hãy liên kết Sheet luân chuyển ở phần Thiết lập nguồn.</div></section>':`
- <section class="panel transfer-prepare"><div class="transfer-section-heading"><div><span class="panel-eyebrow">PHIẾU ĐANG SOẠN</span><h2>${esc(transferFrom)} → ${esc(transferTo)}</h2><p class="note">Đề xuất ${esc(viDate(transferRequestDate))} · Mã tự động ${esc(ref)}</p></div><button type="button" class="primary" data-action="transfer-pdf">↓ Xuất PDF để soạn hàng</button></div>
- ${wh575StockNotice()}<div class="transfer-three-numbers"><div><small>Cửa hàng đề xuất</small><b>${number(prop)} SP</b></div><div><small>Đã gửi trong lịch sử</small><b>${number(sent)} SP</b></div><div><small>Còn chờ</small><b>${number(Math.max(0,prop-sent))} SP</b></div></div>
- <p class="transfer-helper">PDF có cột <strong>Thực gửi để trống</strong> để bạn viết tay khi soạn. Sau khi soạn xong, nhập số vào bảng bên dưới và lưu. Không cần xuất PDF mới để lưu lịch sử.</p>
+ <section class="panel transfer-prepare"><div class="transfer-section-heading"><div><span class="panel-eyebrow">PHIẾU ĐANG SOẠN</span><h2>${esc(transferFrom)} → ${esc(transferTo)}</h2><p class="note">${esc(viDate(transferRequestDate))} · ${esc(ref)}</p></div><button type="button" class="primary" data-action="transfer-pdf">${whIcon('download',17)} In phiếu soạn</button></div>
+ ${wh575StockNotice()}<div class="transfer-three-numbers"><div><small>Đề xuất</small><b>${number(prop)} SP</b></div><div><small>Đã gửi</small><b>${number(sent)} SP</b></div><div><small>Còn chờ</small><b>${number(Math.max(0,prop-sent))} SP</b></div></div>
+ 
  <div class="transfer-prep-heading"><h3>Mã hàng cần soạn <span class="muted">(${number(batch.length)} dòng)</span></h3><label>Ngày thực gửi <input id="transferDispatchDate" type="date" value="${esc(transferDispatchDate)}"></label></div>
  <div class="tablewrap transfer-prep-wrap"><table class="transfer-prep-table"><thead><tr><th>Mã / Size</th><th>Sản phẩm</th><th>SL đề xuất</th><th>Khả dụng HT kho xuất</th><th>Thực gửi</th></tr></thead><tbody>${batch.map(x=>{const m=transferResolved(x),num=transferTrackPending(x),value=transferDrafts.get(x.id)||'';return `<tr><td><b>${esc(x.code)}</b><small>Size ${esc(x.size)}</small><small>${esc(m.chosen?.sku||x.sourceSku||'')}</small></td><td><b>${esc(m.chosen?.product||x.product||'Sản phẩm chưa rõ')}</b><small>${esc(x.variantHint||'')}</small>${m.choices.length>1?`<label class="transfer-ambiguous">Chọn SKU đúng<select data-transfer-sku="${esc(x.id)}"><option value="">Chưa chọn (${m.choices.length} SKU)</option>${transferOpt(m.choices.map(y=>y.sku),x.resolvedSku||'')}</select></label>`:''}</td><td class="transfer-number">${number(x.proposed)}${num<x.proposed?`<small>Còn chờ ${number(num)}</small>`:''}</td><td class="transfer-number">${m.available===null?'<span class="transfer-unmatched" title="'+esc(m.status)+'">'+esc(m.status)+'</span>':number(m.available)}</td><td><input type="number" min="0" step="1" inputmode="numeric" data-transfer-draft="${esc(x.id)}" value="${esc(value)}" placeholder="Để trống" aria-label="Thực gửi ${esc(x.code)} size ${esc(x.size)}"></td></tr>`}).join('')}</tbody></table></div>
- <div class="transfer-photos-prep"><div class="transfer-photo-icon">${whIcon('count',20)}</div><div class="transfer-photo-copy"><b>Ảnh phiếu giấy đã điền</b><small>Chụp hoặc chọn ảnh sau khi soạn · Gắn vào lần gửi đang lưu</small><span id="transferPrepSelection">${transferPrepPhotos.length?transferPrepPhotos.length+' ảnh đã chọn':'Chưa chọn ảnh (không bắt buộc)'}</span></div><label class="transfer-photo-choose">+ Thêm ảnh<input type="file" id="transferPrepPhotoInput" accept="image/*" multiple aria-label="Chọn ảnh phiếu giấy đã điền thực gửi"></label></div>
-  <div class="transfer-savebar"><span class="note">Dữ liệu và ảnh phiếu lưu trong WorkHub/Drive riêng; <strong>không sửa Sheet đề xuất gốc</strong>.</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving||transferPhotoUploading?'disabled':''}>✓ Lưu lần gửi</button></div></section>`}
- <section class="panel transfer-archive"><div class="transfer-section-heading"><div><span class="panel-eyebrow">TRA CỨU</span><h2>Lịch sử đã gửi hàng</h2><p class="note">Chọn ngày gửi và cửa hàng để xem lại số lượng cùng từng mã đã gửi.</p></div><span class="badge info">${number(histAll.length)} lần gửi</span></div>
+ <div class="transfer-batch-evidence"><div class="transfer-evidence-heading"><div><span class="transfer-label-icon">${whIcon('count',18)}</span><div><h3>Ảnh phiếu của đợt</h3><p>Chụp các trang đã điền · Không cần nhập Thực gửi</p></div></div><span class="transfer-count-bubble">${number(transferBatchPhotos(batch).length)} ảnh đã lưu</span></div>
+ ${transferPhotoThumbs(transferBatchPhotos(batch))}
+ <div class="transfer-evidence-controls"><label class="transfer-photo-choose">${whIcon('plus',16)} Chọn ảnh<input type="file" id="transferPrepPhotoInput" accept="image/*" multiple aria-label="Chọn nhiều ảnh phiếu giấy của cùng một đợt"></label><small id="transferPrepSelection">${transferPrepPhotos.length?transferPrepPhotos.length+' ảnh chờ tải':'Có thể chọn nhiều trang cùng lúc'}</small>${transferPrepPhotos.length?'<button type="button" class="small" data-action="transfer-photo-clear">Bỏ chọn</button>':''}<button type="button" class="primary" data-action="transfer-photo-batch" ${!transferPrepPhotos.length||transferPhotoUploading?'disabled':''}>${whIcon('cloud',17)} Lưu ảnh lên Drive</button></div>
+ <small id="transferPhotoState" class="transfer-photo-state" role="status">${esc(transferPhotoProgress||'Ảnh được lưu riêng theo đợt đề xuất, không làm thay đổi số lượng hàng.')}</small></div>
+  <div class="transfer-savebar"><span class="note">Chỉ nhập Thực gửi khi đã đóng hàng.</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving?'disabled':''}>${whIcon('check',17)} Lưu số thực gửi</button></div></section>`}
+ <section class="panel transfer-archive"><div class="transfer-section-heading"><div><span class="panel-eyebrow">TRA CỨU</span><h2>Lịch sử đã gửi hàng</h2></div><span class="badge info">${number(histAll.length)} lần gửi</span></div>
  <div class="transfer-history-filter"><label>Ngày thực gửi <input type="date" id="transferHistoryDate" value="${esc(transferHistoryDate)}"></label><label>Cửa hàng <select id="transferHistoryShop"><option value="">Tất cả cửa hàng</option>${transferOpt(shops,transferHistoryShop)}</select></label><label>Tìm mã / size / tuyến <input id="transferHistoryQuery" type="search" placeholder="VD: 7810 / LTT" value="${esc(transferHistoryQuery)}"></label><button type="button" class="small" data-action="transfer-clear-history">Xóa lọc</button></div>
  ${history.length?`<div class="transfer-archive-list">${history.slice(0,120).map(h=>{const selected=transferHistorySelected===h.id;return `<button type="button" class="transfer-archive-row ${selected?'selected':''}" data-action="transfer-show-history" data-id="${esc(h.id)}"><span><b>${esc(viDate(h.date))}</b><small>${esc(h.from)} → ${esc(h.to)}</small></span><span><b>${number(h.qty)} SP</b><small>${number(h.rows.length)} mã/size · ${number(h.photos.length)} ảnh phiếu</small></span><span class="transfer-view">${selected?'Đang xem':'Xem chi tiết →'}</span></button>`}).join('')}</div>`:'<div class="transfer-no-history">Chưa tìm thấy lần gửi nào theo bộ lọc này.</div>'}
  ${historyView?`<div class="transfer-history-detail"><div class="transfer-section-heading"><div><h3>Chi tiết lần gửi ${esc(viDate(historyView.date))}</h3><p class="note">${esc(historyView.from)} → ${esc(historyView.to)} · Tổng ${number(historyView.qty)} SP</p></div><div class="wh575-history-tools"><button type="button" class="small" data-action="transfer-pdf-dispatch">↓ Xuất lại phiếu đã gửi</button>${wh575HistoryEditable(historyView)?`<button type="button" class="small" data-action="transfer-history-edit" ${wh575HistoryMutationBusy?'disabled':''}>Sửa lần gửi</button><button type="button" class="small danger" data-action="transfer-history-delete" ${wh575HistoryMutationBusy?'disabled':''}>Xóa lần gửi</button>`:'<span class="note">Lịch sử cũ: chỉ xem/đối soát, không đủ dữ liệu để sửa an toàn.</span>'}</div></div>${wh575HistoryEditPanel(historyView)}<div class="transfer-history-photos"><div class="transfer-photo-head"><b>${whIcon('count',17)} Ảnh phiếu đã điền (${historyView.photos.length})</b><span class="note">Lưu theo lần gửi · Google Drive</span></div>${transferPhotoThumbs(historyView.photos)}<div class="transfer-history-photo-actions"><label class="transfer-photo-choose">+ Chọn ảnh thêm<input id="transferArchivePhotoInput" type="file" accept="image/*" multiple aria-label="Bổ sung ảnh phiếu cho lần gửi đã chọn"></label><span id="transferArchiveSelection" class="note">${transferArchivePhotos.length?transferArchivePhotos.length+' ảnh đã chọn':'Chưa chọn ảnh'}</span><button type="button" data-action="transfer-photo-history" class="primary" ${transferPhotoUploading?'disabled':''}>${whIcon('cloud',16)} Tải ảnh lên Drive</button></div><small id="transferPhotoState" class="transfer-photo-state" role="status">${esc(transferPhotoProgress||'Ảnh chỉ được xem bởi người có quyền truy cập Drive.')}</small></div><div class="tablewrap"><table class="transfer-history-table"><thead><tr><th>Mã</th><th>Size</th><th>Sản phẩm</th><th>Thực gửi</th></tr></thead><tbody>${historyView.rows.map(({x,entry})=>`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.size)}</td><td>${esc(x.product||'—')}</td><td><b>${number(entry.qty)}</b></td></tr>`).join('')}</tbody></table></div></div>`:''}</section></div>`;
@@ -1411,15 +1514,11 @@ async function transferRecordDispatch(){
  transferSaving=true;let savedLocally=false;
  const group='LCG-'+uid(),snap=updates.map(z=>({x:z.x,oldShipments:z.x.shipments,oldSent:z.x.sent,oldUpdated:z.x.updatedAt}));
  try{
-  for(const z of updates){const x=z.x;const previous=transferEntriesWithLegacy(x).map(v=>({...v}));previous.push({id:uid(),group,date:transferDispatchDate,qty:z.qty,ref:transferAutoNumber(x,{date:transferDispatchDate,id:group}),at:new Date().toISOString(),sku:z.sku});x.shipments=JSON.stringify(previous);x.sent=transferSentTotal(x);x.updatedAt=new Date().toISOString()}
+  for(const z of updates){const x=z.x;const previous=[...transferBatchProofEntries(x),...transferEntriesWithLegacy(x)].map(v=>({...v}));previous.push({id:uid(),group,date:transferDispatchDate,qty:z.qty,ref:transferAutoNumber(x,{date:transferDispatchDate,id:group}),at:new Date().toISOString(),sku:z.sku});x.shipments=JSON.stringify(previous);x.sent=transferSentTotal(x);x.updatedAt=new Date().toISOString()}
   await persist('transfers');savedLocally=true;transferDrafts.clear();transferPendingEdits=false;transferHistorySelected=group;transferHistoryDate=transferDispatchDate;transferHistoryShop=isOnlineWarehouse(batch[0].from)?batch[0].to:batch[0].from;
   if(cloudIsReady()){
    try{await cloudFlush();if(cloudDirty.has('transfers')||cloudBlocked)toast('Đã lưu trên thiết bị, dữ liệu Google còn chờ đồng bộ. Hãy kiểm tra trạng thái Google.',true);else toast('Đã lưu '+total+' SP ngày '+viDate(transferDispatchDate)+' lên WorkHub và Sheets riêng.')}catch(e){toast('Đã lưu trên thiết bị; chưa đồng bộ Google: '+e.message,true)}
    }else toast('Đã lưu '+total+' SP trên thiết bị. Kết nối Google để dùng chung lịch sử trên điện thoại.',true);
-   if(transferPrepPhotos.length){
-    try{await transferAttachPhotosToGroup(group,transferPrepPhotos,'prep')}
-    catch(photoError){transferArchivePhotos=[...transferPrepPhotos];transferPrepPhotos=[];toast('Lần gửi đã được lưu nhưng ảnh chưa hoàn tất: '+(photoError.message||photoError)+'. Mở lịch sử bên dưới và bấm Tải ảnh lên Drive để thử lại.',true)}
-   }
    render();
  }catch(e){if(!savedLocally){for(const z of snap){z.x.shipments=z.oldShipments;z.x.sent=z.oldSent;z.x.updatedAt=z.oldUpdated}await dbSet('transfers',data.transfers)}throw e}
  finally{transferSaving=false;if(page==='transfers')render()}
@@ -1580,6 +1679,7 @@ async function transferPdf(dispatchOnly=false){
 function transferCsv(){const rows=transferBatchRows();if(!rows.length)throw new Error('Không có phiếu để xuất');const headers=['Mã phiếu tự tạo','Ngày đề xuất','Kho xuất','Kho nhận','Mã 4 số','Size','SKU','Sản phẩm','SL đề xuất','Khả dụng HT kho xuất','Đã gửi WorkHub','SL gửi trên file nguồn','Còn chờ','Chi tiết lần gửi'];const body=rows.map(x=>{const s=transferResolved(x);return [transferAutoNumber(x),x.date,x.from,x.to,x.code,x.size,s.chosen?.sku||'',s.chosen?.product||x.product,x.proposed,s.available??'',transferSentTotal(x),x.sourceSent||0,transferPending(x),transferEntriesWithLegacy(x).map(e=>e.date+': '+e.qty+(e.ref?' ('+e.ref+')':'')).join('; ')]});const escCsv=x=>{let s=String(x??'');if(/^[=+@-]/.test(s.trimStart()))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};download('\uFEFF'+[headers,...body].map(r=>r.map(escCsv).join(',')).join('\r\n'),'WorkHub_LuanChuyen_'+today()+'.csv','text/csv;charset=utf-8')}
 function transferOnInput(e){const t=e.target;
  if(['transferFrom','transferTo','transferRequestDate','transferBatch','transferHistoryMode'].includes(t.id)){
+  if(['transferFrom','transferTo','transferRequestDate','transferBatch'].includes(t.id)&&transferPrepPhotos.length){transferPrepPhotos=[];transferPrepBatchKey='';toast('Đã bỏ chọn ảnh chờ tải khi đổi đợt đề xuất.')}
   if(t.id==='transferFrom'){transferFrom=t.value;transferTo='__init';transferRequestDate='__init';transferBatch='__init'}
   if(t.id==='transferTo'){transferTo=t.value;transferRequestDate='__init';transferBatch='__init'}
   if(t.id==='transferRequestDate'){transferRequestDate=t.value;transferBatch='__init'}
@@ -1649,7 +1749,7 @@ async function wh575ChangeHistory(mode){
     const qty=map.get(key);
     if(mode==='edit'&&qty>0)revised.push({...e,qty,date:newDay,editedAt:new Date().toISOString()});
    }
-   x.shipments=JSON.stringify(revised);
+   x.shipments=JSON.stringify([...transferBatchProofEntries(x),...revised]);
    x.sent=revised.reduce((n,e)=>n+transferInt(e.qty),0);
    x.updatedAt=new Date().toISOString();
   }
@@ -1666,7 +1766,7 @@ async function wh575ChangeHistory(mode){
  }finally{wh575HistoryMutationBusy=false;if(page==='transfers')render()}
 }
 document.addEventListener('change',event=>{const id=event.target?.id;if(id!=='transferPrepPhotoInput'&&id!=='transferArchivePhotoInput')return;try{transferPhotoSelect(event.target,id==='transferArchivePhotoInput'?'archive':'prep')}catch(err){event.target.value='';toast(err.message,true)}});
-async function transferClickAction(action,el){switch(action){case 'transfer-import':await transferImport();break;case 'transfer-link':await transferLink();break;case 'transfer-source-auth':await transferAuthorizeSource();break;case 'transfer-refresh':await transferRefresh();break;case 'transfer-save':await transferSave();break;case 'transfer-send':await transferRecordDispatch();break;case 'transfer-pdf':await transferPdf(false);break;case 'transfer-pdf-dispatch':await transferPdf(true);break;case 'transfer-photo-history':await transferAttachPhotosToGroup(transferHistorySelected,transferArchivePhotos,'archive');break;case 'transfer-show-history':transferHistorySelected=el?.dataset.id||'';transferArchivePhotos=[];transferPhotoProgress='';wh575HistoryEditing='';render();break;case 'transfer-clear-history':transferHistoryDate='';transferHistoryShop='';transferHistoryQuery='';render();break;case 'transfer-history-edit':wh575HistoryEditing=transferHistorySelected;render();break;case 'transfer-history-cancel':wh575HistoryEditing='';render();break;case 'transfer-history-save':await wh575ChangeHistory('edit');break;case 'transfer-history-delete':await wh575ChangeHistory('delete');break;case 'transfer-csv':transferCsv();break;default:return false}return true}
+async function transferClickAction(action,el){switch(action){case 'transfer-import':await transferImport();break;case 'transfer-link':await transferLink();break;case 'transfer-source-auth':await transferAuthorizeSource();break;case 'transfer-refresh':await transferRefresh();break;case 'transfer-save':await transferSave();break;case 'transfer-send':await transferRecordDispatch();break;case 'transfer-pdf':await transferPdf(false);break;case 'transfer-pdf-dispatch':await transferPdf(true);break;case 'transfer-photo-history':await transferAttachPhotosToGroup(transferHistorySelected,transferArchivePhotos,'archive');break;case 'transfer-photo-batch':await transferUploadBatchPhotos();break;case 'transfer-photo-clear':transferClearPrep();break;case 'transfer-show-history':transferHistorySelected=el?.dataset.id||'';transferArchivePhotos=[];transferPhotoProgress='';wh575HistoryEditing='';render();break;case 'transfer-clear-history':transferHistoryDate='';transferHistoryShop='';transferHistoryQuery='';render();break;case 'transfer-history-edit':wh575HistoryEditing=transferHistorySelected;render();break;case 'transfer-history-cancel':wh575HistoryEditing='';render();break;case 'transfer-history-save':await wh575ChangeHistory('edit');break;case 'transfer-history-delete':await wh575ChangeHistory('delete');break;case 'transfer-csv':transferCsv();break;default:return false}return true}
 
 
 // WorkHub 5.7.6.5 · Đinh & Chip: edit the owner's separate Sheet, preserve its formulas.
