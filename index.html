@@ -2304,35 +2304,23 @@ async function cloudEnsureTransferSheet(){
 }
 // 5.7.7: Reconcile a new phone cache safely before the login preflight.
 // No blind overwrite: only identical/shared records and strictly new local IDs qualify.
+// Single-owner last successful save wins per record; keep other record IDs intact.
 async function cloudRepairUnbasedPending(){
  if(!cloudIsConnected()||!data.settings.cloudSheetId)return;
  for(const k of [...cloudDirty]){
   if(k==='stock'||Array.isArray(await dbGet(cloudBaseKey(k))))continue;
   const remote=await cloudReadCollection(k);
+  // The device's pending records are the edits to send; adopt the server as baseline.
+  // Without a baseline, do not infer deletions from missing local rows.
   const local=Array.isArray(data[k])?data[k]:[];
-  const remoteMap=cloudById(k,remote),localMap=cloudById(k,local);
-  const divergent=[...localMap].filter(([id,row])=>remoteMap.has(id)&&cloudComparable(k,row)!==cloudComparable(k,remoteMap.get(id)));
-  // If same ID changed on both devices, no original version is available to decide safely.
-  if(divergent.length){
-   cloudStatus('⚠ '+CLOUD_TABLES[k].name+': '+divergent.length+' bản ghi khác nhau giữa điện thoại và Google. Hãy sao lưu JSON để đối chiếu.',true);
-   continue;
-  }
-  const onlyLocal=[...localMap.keys()].filter(id=>!remoteMap.has(id));
-  await cloudRememberBase(k,remote);
-  if(!onlyLocal.length){
-   // Local data is already on Sheets. Remote-only records may be adopted safely.
-   data[k]=remote;await dbSet(k,remote);
-   cloudDirty.delete(k);
-  }
-  // With only new IDs, carry over remote-only records, otherwise merge could delete them.
-  if(onlyLocal.length){
-   data[k]=[...remote,...local.filter(row=>!remoteMap.has(String(row.id||'')))];
-   await dbSet(k,data[k]);
-  }
+  const localIds=new Set(local.map(r=>String(r.id||'')));
+  data[k]=[...local,...remote.filter(r=>!localIds.has(String(r.id||'')))];
+  await dbSet(k,data[k]);await cloudRememberBase(k,remote);
   const revs=await cloudGetRevs();
   data.settings.cloudRevs={...(data.settings.cloudRevs||{}),[k]:String(revs[k]||'')};
   await cloudSaveConfig();
  }
+ cloudBlocked=false;
 }
 async function cloudPreflight(){
  await cloudEnsureTransferSheet();
@@ -2341,13 +2329,14 @@ async function cloudPreflight(){
  const names=new Set((info.sheets||[]).map(s=>s.properties.title));
  if([...CLOUD_KEYS.map(k=>CLOUD_TABLES[k].name),'WH_META'].some(n=>!names.has(n)))throw new Error('Sheet thiếu cấu trúc WorkHub. Không tạo lại hay ghi đè dữ liệu.');
  const current=await cloudGetRevs();await transferReadSourceFromCloud(current);try{await whSharedLoad({seedLocal:true})}catch(e){console.warn('[WorkHub] Chưa khôi phục được cấu hình Sheet dùng chung:',e);toast('Chưa đọc được liên kết báo cáo từ Google: '+e.message,true)}
+ // Ordinary collections reconcile against current Sheet on upload; only stock bulk imports retain a guard.
+ cloudBlocked=false;
  for(const k of cloudDirty){
-   const last=String((data.settings.cloudRevs||{})[k]||'');
-   if(k==='stock'&&String(current[k]||'')!==last){cloudBlocked=true;break}
-   if(k!=='stock'&&String(current[k]||'')!==last&&!Array.isArray(await dbGet(cloudBaseKey(k)))){cloudBlocked=true;break}
+  const last=String((data.settings.cloudRevs||{})[k]||'');
+  if(k==='stock'&&String(current[k]||'')!==last){cloudBlocked=true;break}
  }
- if(cloudBlocked)cloudStatus('⚠ Có thay đổi chưa đồng bộ từ thiết bị cũ. Cần sao lưu và xử lý trước khi ghi.',true);
- else cloudStatus('Đã xác thực Google · Đang kiểm tra bản mới...');
+ if(cloudBlocked)cloudStatus('⚠ Tồn kho thay đổi trên thiết bị khác. Kiểm tra trước khi thay file Haravan.',true);
+ else cloudStatus('✓ Đã xác thực Google · Các thay đổi được gửi theo thứ tự lưu thành công');
 }
 
 async function cloudGetRevs(){const url='https://sheets.googleapis.com/v4/spreadsheets/'+encodeURIComponent(data.settings.cloudSheetId)+'/values/'+encodeURIComponent("'WH_META'!A1:B"+(CLOUD_KEYS.length+7));const res=await cloudJson(url);const out={};for(const row of res.values||[])if(row.length)out[String(row[0])]=String(row[1]||'');return out}
@@ -2390,34 +2379,25 @@ async function cloudPushOne(k){
  if(k==='stock')return cloudPushStock(k);
  const tab=CLOUD_TABLES[k],spreadsheetId=encodeURIComponent(data.settings.cloudSheetId);
  if(k==='tasks')await cloudEnsureReminderHeaders(spreadsheetId);
- const revs=await cloudGetRevs(),savedRev=String((data.settings.cloudRevs||{})[k]||''),remoteRev=String(revs[k]||'');
+ const revs=await cloudGetRevs(),remoteRev=String(revs[k]||'');
  const base=await dbGet(cloudBaseKey(k));
- if(remoteRev!==savedRev&&!Array.isArray(base)){
-  cloudBlocked=true;throw new Error('Dữ liệu '+tab.name+' đã thay đổi trên máy khác. Chưa có bản gốc để gộp an toàn. Hãy sao lưu JSON rồi tải lại Sheets.');
- }
  const remote=await cloudReadCollection(k),localSnapshot=structuredClone(data[k]);
  const current=cloudById(k,localSnapshot),server=cloudById(k,remote);
- const baseline=cloudById(k,Array.isArray(base)?base:remote);
+ const hasBase=Array.isArray(base),baseline=cloudById(k,hasBase?base:[]);
  const changed=[],deleted=[];const merged=new Map(server);
+ // If baseline is absent, locally pending IDs are considered edits, but absent IDs do not imply deletion.
  const allIds=new Set([...current.keys(),...baseline.keys()]);
  for(const key of allIds){
   const old=baseline.get(key),next=current.get(key),onServer=server.get(key);
   const lc=cloudComparable(k,old||{}),nc=cloudComparable(k,next||{}),rc=cloudComparable(k,onServer||{});
-  if(nc===lc)continue;
-  let candidate=next;
-  if(rc!==lc&&rc!==nc){
-   // Merge independent field edits on a shared record, without overwriting either device.
-   // Deletion and same-field disagreement still require manual review.
-   if(!old||!next||!onServer){cloudBlocked=true;throw new Error('Xung đột xóa/sửa bản ghi '+key+' trong '+tab.name+'. Hãy sao lưu trước khi xử lý.');}
-   candidate={...onServer};let collision=[];
-   for(const col of tab.columns){
-    const a=String(cloudValue(col,old)??''),b=String(cloudValue(col,next)??''),c=String(cloudValue(col,onServer)??'');
-    if(b!==a){if(c!==a&&c!==b)collision.push(col);else candidate[col]=next[col]??'';}
-   }
-   if(collision.length){cloudBlocked=true;throw new Error('Hai thiết bị sửa khác nhau cùng trường '+collision.join(', ')+' của '+key+'. Dữ liệu máy vẫn được giữ, hãy sao lưu và đối chiếu.');}
+  if(hasBase&&nc===lc)continue;
+  if(!next){
+   if(hasBase&&old){merged.delete(key);if(onServer)deleted.push(key)}
+  }else{
+   // Last *successful upload* wins for a record that was edited locally.
+   // Updates on unrelated IDs remain untouched on Google Sheets.
+   merged.set(key,next);if(nc!==rc)changed.push(key);
   }
-  if(!next){merged.delete(key);if(onServer)deleted.push(key)}
-  else {merged.set(key,candidate);if(cloudComparable(k,candidate)!==rc)changed.push(key)}
  }
  // Recheck revision just before mutating. This does not make Sheets a transactional database,
  // but prevents routine stale-device overwrites and preserves changes to distinct records.
@@ -2441,7 +2421,7 @@ async function cloudPushOne(k){
  // Check the saved server state. New edits made during upload remain in the pending queue.
  const confirmed=await cloudReadCollection(k),after=await cloudGetRevs();
  if(String(after[k]||'')!==String(data.settings.cloudRevs[k]||'')){
-  cloudBlocked=true;throw new Error('Dữ liệu '+tab.name+' vừa bị thay đổi trong khi xác nhận. Cần kiểm tra lại.');
+  throw new Error('Có lần lưu mới trong khi xác nhận '+tab.name+'. Thử đồng bộ lại để nhận bản mới nhất.');
  }
  await cloudRememberBase(k,confirmed);
  if(cloudComparableList(k,data[k])===cloudComparableList(k,localSnapshot)){
