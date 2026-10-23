@@ -366,6 +366,41 @@ input,select,textarea{font-size:12px;min-height:41px;border-radius:10px!importan
 body[data-theme=dark] .transfer-prep-table tr.transfer-duplicate td{background:#5a4120!important}
 .transfer-photo-queue{position:fixed;bottom:22px;right:20px;width:min(380px,calc(100vw - 30px));z-index:1100;background:#233450;color:#fff;border:1px solid #53658c;border-radius:14px;padding:14px;box-shadow:0 12px 40px #0005;font-size:12px}.transfer-photo-queue[hidden]{display:none}.transfer-photo-queue.failed{background:#5a2635;border-color:#f0929b}.transfer-photo-queue-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.transfer-photo-queue-head button{background:transparent;color:inherit;border:0;padding:0 7px;min-height:24px;font-size:20px}.transfer-photo-queue-head button:disabled{opacity:.3}.transfer-photo-queue-track{background:#ffffff3c;height:7px;border-radius:9px;overflow:hidden;margin:10px 0}.transfer-photo-queue-track>div{height:100%;background:#84dec9;transition:width .12s}.transfer-photo-queue small{color:#d9e6f3;font-size:11px}.transfer-photo-queue-track>div.indeterminate{animation:whTransferLoad 1.5s ease-in-out infinite alternate}@keyframes whTransferLoad{from{transform:translateX(-95%)}to{transform:translateX(220%)}}@media(max-width:750px){.transfer-photo-queue{bottom:calc(88px + env(safe-area-inset-bottom, 0px));right:10px;left:10px;width:auto;z-index:3000;box-shadow:0 15px 45px #0009}}
 .transfer-photo-links .transfer-photo-remove{min-height:34px;padding:7px 9px;align-self:center;border-color:#ecb6bd;background:#fff3f4;color:#af3548;font-weight:700}.transfer-photo-links{align-items:center}.transfer-photo-links .transfer-photo-remove:disabled{opacity:.45}
+
+/* WorkHub 5.8.0 — minimalist interface cleanup. No changes to saved schema. */
+:root{--shadow:0 2px 12px #06142a08;--line:#344059}
+body[data-theme=light]{--shadow:0 2px 12px #122c1b08;--line:#e4e9ef}
+.workspace{max-width:1480px}
+.panel{box-shadow:none!important;border-radius:15px!important;margin-bottom:14px!important}
+.topbar{margin-bottom:16px!important}.topbar h1{letter-spacing:-.6px!important}
+.quick-grid{gap:10px!important}.quick-action{box-shadow:none!important;border-radius:13px!important}
+.stat{box-shadow:none!important;border-radius:13px!important}
+input,select,textarea{transition:border-color .15s,box-shadow .15s}
+input:focus-visible,select:focus-visible,textarea:focus-visible{box-shadow:0 0 0 3px rgba(106,94,235,.14)}
+button,.primary{box-shadow:none!important}
+.transfer-workspace{gap:12px!important}
+.transfer-v574 .transfer-simple-hero,.transfer-v574 .transfer-prepare{border-radius:15px!important;box-shadow:none!important}
+.transfer-v574 .transfer-three-numbers>div{border-radius:11px!important;box-shadow:none!important}
+.transfer-v574 .transfer-selector-grid{margin-top:14px!important}
+.transfer-v574 .transfer-prep-heading{margin-top:16px!important}
+.transfer-photo-choose{min-height:42px;align-items:center;justify-content:center}
+.transfer-evidence-controls{row-gap:9px}
+.transfer-savebar{border-top:1px solid var(--line);padding-top:13px;margin-top:16px}
+.transfer-prep-wrap{max-height:60vh}
+.transfer-prep-table thead th{position:sticky;top:0;z-index:2}
+@media(max-width:750px){
+ .workspace{padding-left:12px!important;padding-right:12px!important}
+ .transfer-v574 .transfer-selector-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .transfer-v574 .transfer-selector-grid label{min-width:0!important}
+ .transfer-v574 .transfer-selector-grid select{width:100%!important;min-width:0!important}
+ .transfer-evidence-controls{display:flex!important;flex-wrap:wrap!important;align-items:center!important}
+ .transfer-evidence-controls .primary{flex:1 1 170px!important;min-height:44px}
+ .transfer-evidence-controls small{flex:1 1 100px;overflow-wrap:anywhere}
+ .transfer-prep-wrap{max-height:55vh}
+ .transfer-savebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+ .transfer-savebar .primary{flex:1 1 160px}
+ .topbar h1{font-size:22px!important}
+}
 </style>
 <style>
 
@@ -603,14 +638,14 @@ body[data-theme=dark] .transfer-count-bubble{background:#253250;color:#c1cce0}
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.7.6.8</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.8.0</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
   <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB <span class="wh-spark">✦</span> DAILY SPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Tất cả công việc, trong một nơi</p></div><div class="topright"><button class="wh-command" type="button" data-action="quick-open" title="Tìm nhanh chức năng · Ctrl+K" aria-label="Mở tìm nhanh">⌕ <span>Tìm nhanh</span><kbd>⌘K</kbd></button><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.7.6.8 · Neo Minimal</div>
+  <div class="footerline">WorkHub 5.8.0 · Simple Workspace</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
@@ -1560,14 +1595,11 @@ function transferHistoryFiltered(){
 }
 function renderTransfers(){
  const {origins,availableTos,dates,batches}=transferRoutes();
- const batch=transferBatchRows(),duplicateKeys=transferDuplicateKeys(batch),history=transferHistoryFiltered();
+ const batch=transferBatchRows(),duplicateKeys=transferDuplicateKeys(batch);
  if(!transferDispatchDate)transferDispatchDate=today();
  const linked=!!(data.settings.transferSourceId||data.settings.transferSourceSheetId),url=data.settings.transferSourceUrl||'';
  const prop=batch.reduce((n,x)=>n+transferInt(x.proposed),0),sent=batch.reduce((n,x)=>n+transferTrackSent(x),0);
  const ref=batch.length?transferAutoNumber(batch[0]):'';
- const histAll=transferAllSentHistory();
- const shops=[...new Set(histAll.flatMap(h=>[h.from,h.to]).filter(x=>!isOnlineWarehouse(x)))].sort((a,b)=>a.localeCompare(b,'vi'));
- const historyView=history.find(h=>h.id===transferHistorySelected);
  return `<div class="transfer-workspace transfer-v574">
  <section class="panel transfer-simple-hero"><div class="panel-head"><div><span class="panel-eyebrow">LUÂN CHUYỂN ONLINE ↔ CỬA HÀNG</span><h2>Luân chuyển hàng</h2></div><span class="badge info">${number((data.transfers||[]).length)} mã đề xuất</span></div>
  
@@ -1584,10 +1616,7 @@ function renderTransfers(){
  <div class="transfer-evidence-controls"><label class="transfer-photo-choose">${whIcon('plus',16)} Chọn ảnh<input type="file" id="transferPrepPhotoInput" accept="image/*" multiple aria-label="Chọn nhiều ảnh phiếu giấy của cùng một đợt"></label><small id="transferPrepSelection">${transferPrepPhotos.length?transferPrepPhotos.length+' ảnh chờ tải':'Có thể chọn nhiều trang cùng lúc'}</small>${transferPrepPhotos.length?'<button type="button" class="small" data-action="transfer-photo-clear">Bỏ chọn</button>':''}<button type="button" class="primary" data-action="transfer-photo-batch" ${transferPhotoUploading?'disabled':''}>${whIcon('cloud',17)} Lưu ảnh lên Drive</button></div>
  <small id="transferPhotoState" class="transfer-photo-state" role="status">${esc(transferPhotoProgress||'Ảnh được lưu riêng theo đợt đề xuất, không làm thay đổi số lượng hàng.')}</small></div>
   <div class="transfer-savebar"><span class="note">Chỉ nhập Thực gửi khi đã đóng hàng.</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving?'disabled':''}>${whIcon('check',17)} Lưu số thực gửi</button></div></section>`}
- <section class="panel transfer-archive"><div class="transfer-section-heading"><div><span class="panel-eyebrow">TRA CỨU</span><h2>Lịch sử đã gửi hàng</h2></div><span class="badge info">${number(histAll.length)} lần gửi</span></div>
- <div class="transfer-history-filter"><label>Ngày thực gửi <input type="date" id="transferHistoryDate" value="${esc(transferHistoryDate)}"></label><label>Cửa hàng <select id="transferHistoryShop"><option value="">Tất cả cửa hàng</option>${transferOpt(shops,transferHistoryShop)}</select></label><label>Tìm mã / size / tuyến <input id="transferHistoryQuery" type="search" placeholder="VD: 7810 / LTT" value="${esc(transferHistoryQuery)}"></label><button type="button" class="small" data-action="transfer-clear-history">Xóa lọc</button></div>
- ${history.length?`<div class="transfer-archive-list">${history.slice(0,120).map(h=>{const selected=transferHistorySelected===h.id;return `<button type="button" class="transfer-archive-row ${selected?'selected':''}" data-action="transfer-show-history" data-id="${esc(h.id)}"><span><b>${esc(viDate(h.date))}</b><small>${esc(h.from)} → ${esc(h.to)}</small></span><span><b>${number(h.qty)} SP</b><small>${number(h.rows.length)} mã/size · ${number(h.photos.length)} ảnh phiếu</small></span><span class="transfer-view">${selected?'Đang xem':'Xem chi tiết →'}</span></button>`}).join('')}</div>`:'<div class="transfer-no-history">Chưa tìm thấy lần gửi nào theo bộ lọc này.</div>'}
- ${historyView?`<div class="transfer-history-detail"><div class="transfer-section-heading"><div><h3>Chi tiết lần gửi ${esc(viDate(historyView.date))}</h3><p class="note">${esc(historyView.from)} → ${esc(historyView.to)} · Tổng ${number(historyView.qty)} SP</p></div><div class="wh575-history-tools"><button type="button" class="small" data-action="transfer-pdf-dispatch">↓ Xuất lại phiếu đã gửi</button>${wh575HistoryEditable(historyView)?`<button type="button" class="small" data-action="transfer-history-edit" ${wh575HistoryMutationBusy?'disabled':''}>Sửa lần gửi</button><button type="button" class="small danger" data-action="transfer-history-delete" ${wh575HistoryMutationBusy?'disabled':''}>Xóa lần gửi</button>`:'<span class="note">Lịch sử cũ: chỉ xem/đối soát, không đủ dữ liệu để sửa an toàn.</span>'}</div></div>${wh575HistoryEditPanel(historyView)}<div class="transfer-history-photos"><div class="transfer-photo-head"><b>${whIcon('count',17)} Ảnh phiếu đã điền (${historyView.photos.length})</b><span class="note">Lưu theo lần gửi · Google Drive</span></div>${transferPhotoThumbs(historyView.photos)}<div class="transfer-history-photo-actions"><label class="transfer-photo-choose">+ Chọn ảnh thêm<input id="transferArchivePhotoInput" type="file" accept="image/*" multiple aria-label="Bổ sung ảnh phiếu cho lần gửi đã chọn"></label><span id="transferArchiveSelection" class="note">${transferArchivePhotos.length?transferArchivePhotos.length+' ảnh đã chọn':'Chưa chọn ảnh'}</span><button type="button" data-action="transfer-photo-history" class="primary" ${transferPhotoUploading?'disabled':''}>${whIcon('cloud',16)} Tải ảnh lên Drive</button></div><small id="transferPhotoState" class="transfer-photo-state" role="status">${esc(transferPhotoProgress||'Ảnh chỉ được xem bởi người có quyền truy cập Drive.')}</small></div><div class="tablewrap"><table class="transfer-history-table"><thead><tr><th>Mã</th><th>Size</th><th>Sản phẩm</th><th>Thực gửi</th></tr></thead><tbody>${historyView.rows.map(({x,entry})=>`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.size)}</td><td>${esc(x.product||'—')}</td><td><b>${number(entry.qty)}</b></td></tr>`).join('')}</tbody></table></div></div>`:''}</section></div>`;
+</div>`;
 }
 
 function transferMergeRows(incoming){
