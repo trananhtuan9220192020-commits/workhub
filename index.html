@@ -1319,6 +1319,17 @@ function transferPhotoSelect(input,kind){
  if(archive)transferArchivePhotos=all;else{transferPrepPhotos=all;transferPrepBatchKey=selectedKey}
  const out=$(archive?'transferArchiveSelection':'transferPrepSelection');if(out)out.textContent=all.length+' ảnh đã chọn · '+all.map(v=>v.name).join(', ');
  input.value='';
+ // 5.7.10: the prep button was initially rendered disabled and never re-enabled after selecting files.
+ // Update its DOM state immediately; no full render needed (keeps the current file selection).
+ if(!archive){
+  const saveButton=document.querySelector('[data-action="transfer-photo-batch"]');
+  if(saveButton){saveButton.disabled=!transferPrepPhotos.length||transferPhotoUploading;saveButton.setAttribute('aria-disabled',String(saveButton.disabled));}
+  const clearButton=document.querySelector('[data-action="transfer-photo-clear"]');
+  if(!clearButton&&transferPrepPhotos.length){
+   const b=document.createElement('button');b.type='button';b.className='small';b.dataset.action='transfer-photo-clear';b.textContent='Bỏ chọn';
+   saveButton?.parentElement?.insertBefore(b,saveButton);
+  }
+ }
 }
 function transferClearPrep(){transferPrepPhotos=[];transferPrepBatchKey='';transferPhotoProgress='';render()}
 // 5.7.9: wait for a pending Sheets flush instead of treating an in-flight flush as a failed photo save.
