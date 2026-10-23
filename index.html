@@ -365,6 +365,7 @@ input,select,textarea{font-size:12px;min-height:41px;border-radius:10px!importan
 .transfer-duplicate-label{display:inline-block;margin-top:3px;font-weight:800;color:#9b5910;font-size:10px}
 body[data-theme=dark] .transfer-prep-table tr.transfer-duplicate td{background:#5a4120!important}
 .transfer-photo-queue{position:fixed;bottom:22px;right:20px;width:min(380px,calc(100vw - 30px));z-index:1100;background:#233450;color:#fff;border:1px solid #53658c;border-radius:14px;padding:14px;box-shadow:0 12px 40px #0005;font-size:12px}.transfer-photo-queue[hidden]{display:none}.transfer-photo-queue.failed{background:#5a2635;border-color:#f0929b}.transfer-photo-queue-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.transfer-photo-queue-head button{background:transparent;color:inherit;border:0;padding:0 7px;min-height:24px;font-size:20px}.transfer-photo-queue-head button:disabled{opacity:.3}.transfer-photo-queue-track{background:#ffffff3c;height:7px;border-radius:9px;overflow:hidden;margin:10px 0}.transfer-photo-queue-track>div{height:100%;background:#84dec9;transition:width .12s}.transfer-photo-queue small{color:#d9e6f3;font-size:11px}.transfer-photo-queue-track>div.indeterminate{animation:whTransferLoad 1.5s ease-in-out infinite alternate}@keyframes whTransferLoad{from{transform:translateX(-95%)}to{transform:translateX(220%)}}@media(max-width:750px){.transfer-photo-queue{bottom:calc(88px + env(safe-area-inset-bottom, 0px));right:10px;left:10px;width:auto;z-index:3000;box-shadow:0 15px 45px #0009}}
+.transfer-photo-links .transfer-photo-remove{min-height:34px;padding:7px 9px;align-self:center;border-color:#ecb6bd;background:#fff3f4;color:#af3548;font-weight:700}.transfer-photo-links{align-items:center}.transfer-photo-links .transfer-photo-remove:disabled{opacity:.45}
 </style>
 <style>
 
@@ -1433,7 +1434,42 @@ async function transferUploadBatchPhotos(){
 }
 
 function transferPhotoRef(ph){return 'https://drive.google.com/file/d/'+encodeURIComponent(ph.id)+'/view'}
-function transferPhotoThumbs(photos){return !photos.length?'<span class="note">Chưa có ảnh phiếu.</span>':`<div class="transfer-photo-links">${photos.map((x,i)=>`<a href="${esc(transferPhotoRef(x))}" rel="noopener noreferrer" target="_blank" title="Xem ảnh trên Google Drive">${whIcon('link',14)} Ảnh ${i+1}<small>${esc(x.name||'Phiếu luân chuyển')}</small></a>`).join('')}</div>`}
+function transferPhotoThumbs(photos){return !photos.length?'<span class="note">Chưa có ảnh phiếu.</span>':`<div class="transfer-photo-links">${photos.map((x,i)=>`<a href="${esc(transferPhotoRef(x))}" rel="noopener noreferrer" target="_blank" title="Xem ảnh trên Google Drive">${whIcon('link',14)} Ảnh ${i+1}<small>${esc(x.name||'Phiếu luân chuyển')}</small></a><button type="button" class="small danger transfer-photo-remove" data-action="transfer-photo-delete" data-photo-id="${esc(x.id)}" title="Xóa ảnh khỏi WorkHub và Drive" ${transferPhotoDeleting||transferPhotoUploading?'disabled':''}>${whIcon('trash',14)} Xóa</button>`).join('')}</div>`}
+// 5.7.15: Delete a single transfer proof photo from both Drive and Sheets.
+let transferPhotoDeleting=false;
+async function transferDeletePhoto(photoId){
+ if(transferPhotoDeleting||transferPhotoUploading)throw new Error('Một thao tác ảnh đang chạy. Vui lòng hoàn tất trước khi xóa.');
+ if(!cloudIsReady()||cloudBlocked)throw new Error('Hãy kết nối Google và bảo đảm đồng bộ hoạt động trước khi xóa ảnh.');
+ if(!photoId)throw new Error('Thiếu mã ảnh cần xóa.');
+ if(cloudDirty.has('transfers'))await transferAwaitPhotoSync();
+ const original=transferBatchRows();
+ const allPhotos=[...transferBatchPhotos(original),...transferAllSentHistory().flatMap(h=>h.photos)];
+ const photo=allPhotos.find(p=>p.id===photoId);
+ if(!photo)throw new Error('Không tìm thấy ảnh trên WorkHub. Hãy làm mới dữ liệu.');
+ if(!confirm('Xóa ảnh "'+(photo.name||photoId)+'" khỏi phiếu luân chuyển VÀ chuyển file vào Thùng rác Google Drive?'))return;
+ transferPhotoDeleting=true;
+ try{
+  // Trash Drive first; a Drive failure must not silently remove the image from WorkHub.
+  await cloudJson('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(photoId)+'?fields=id,trashed','PATCH',{trashed:true});
+  let changed=false;
+  for(const row of data.transfers||[]){
+   const entries=transferAllShipmentEntries(row);let rowChanged=false;
+   for(const entry of entries){
+    if(!Array.isArray(entry.photos))continue;
+    const filtered=entry.photos.filter(p=>p?.id!==photoId);
+    if(filtered.length!==entry.photos.length){entry.photos=filtered;rowChanged=true;}
+   }
+   if(rowChanged){row.shipments=JSON.stringify(entries);row.updatedAt=new Date().toISOString();changed=true;}
+  }
+  if(!changed)throw new Error('Ảnh đã vào Thùng rác Drive, nhưng không tìm thấy tham chiếu để cập nhật trong WorkHub.');
+  await persist('transfers');
+  await transferAwaitPhotoSync();
+  if(cloudDirty.has('transfers')||cloudBlocked)throw new Error('Ảnh đã vào Thùng rác Drive, nhưng Sheets chưa xác nhận xóa. KHÔNG xóa dữ liệu trình duyệt; hãy đồng bộ lại.');
+  toast('Đã xóa ảnh khỏi WorkHub và chuyển vào Thùng rác Drive.');
+ }catch(err){
+  throw new Error((err?.message||String(err))+' Nếu Drive đã chuyển ảnh vào Thùng rác nhưng Sheets chưa đồng bộ, hãy kết nối và đồng bộ lại trước khi xóa tiếp.');
+ }finally{transferPhotoDeleting=false;if(page==='transfers')render()}
+}
 async function transferAttachPhotosToGroup(group,files,source){
  if(transferPhotoUploading)throw new Error('Đang tải ảnh phiếu, hãy đợi hoàn tất.');
  if(!files.length)throw new Error('Hãy chọn ít nhất một ảnh phiếu đã điền.');
@@ -1862,7 +1898,7 @@ function transferHandleSelectedFiles(event){
 }
 document.addEventListener('input',transferHandleSelectedFiles,true);
 document.addEventListener('change',transferHandleSelectedFiles,true);
-async function transferClickAction(action,el){switch(action){case 'transfer-import':await transferImport();break;case 'transfer-link':await transferLink();break;case 'transfer-source-auth':await transferAuthorizeSource();break;case 'transfer-refresh':await transferRefresh();break;case 'transfer-save':await transferSave();break;case 'transfer-send':await transferRecordDispatch();break;case 'transfer-pdf':await transferPdf(false);break;case 'transfer-pdf-dispatch':await transferPdf(true);break;case 'transfer-photo-history':await transferAttachPhotosToGroup(transferHistorySelected,transferArchivePhotos,'archive');break;case 'transfer-photo-batch':transferBeginPhotoUpload();break;case 'transfer-photo-clear':transferClearPrep();break;case 'transfer-show-history':transferHistorySelected=el?.dataset.id||'';transferArchivePhotos=[];transferPhotoProgress='';wh575HistoryEditing='';render();break;case 'transfer-clear-history':transferHistoryDate='';transferHistoryShop='';transferHistoryQuery='';render();break;case 'transfer-history-edit':wh575HistoryEditing=transferHistorySelected;render();break;case 'transfer-history-cancel':wh575HistoryEditing='';render();break;case 'transfer-history-save':await wh575ChangeHistory('edit');break;case 'transfer-history-delete':await wh575ChangeHistory('delete');break;case 'transfer-csv':transferCsv();break;default:return false}return true}
+async function transferClickAction(action,el){switch(action){case 'transfer-import':await transferImport();break;case 'transfer-link':await transferLink();break;case 'transfer-source-auth':await transferAuthorizeSource();break;case 'transfer-refresh':await transferRefresh();break;case 'transfer-save':await transferSave();break;case 'transfer-send':await transferRecordDispatch();break;case 'transfer-pdf':await transferPdf(false);break;case 'transfer-pdf-dispatch':await transferPdf(true);break;case 'transfer-photo-history':await transferAttachPhotosToGroup(transferHistorySelected,transferArchivePhotos,'archive');break;case 'transfer-photo-batch':transferBeginPhotoUpload();break;case 'transfer-photo-clear':transferClearPrep();break;case 'transfer-photo-delete':await transferDeletePhoto(el?.dataset.photoId);break;case 'transfer-show-history':transferHistorySelected=el?.dataset.id||'';transferArchivePhotos=[];transferPhotoProgress='';wh575HistoryEditing='';render();break;case 'transfer-clear-history':transferHistoryDate='';transferHistoryShop='';transferHistoryQuery='';render();break;case 'transfer-history-edit':wh575HistoryEditing=transferHistorySelected;render();break;case 'transfer-history-cancel':wh575HistoryEditing='';render();break;case 'transfer-history-save':await wh575ChangeHistory('edit');break;case 'transfer-history-delete':await wh575ChangeHistory('delete');break;case 'transfer-csv':transferCsv();break;default:return false}return true}
 
 
 // WorkHub 5.7.6.5 · Đinh & Chip: edit the owner's separate Sheet, preserve its formulas.
