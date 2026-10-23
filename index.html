@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 5.7.6.9 · Multi-device & Transfer</title>
+<title>WorkHub 6.0 · Soft Green Warehouse</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
@@ -401,6 +401,79 @@ button,.primary{box-shadow:none!important}
  .transfer-savebar .primary{flex:1 1 160px}
  .topbar h1{font-size:22px!important}
 }
+
+/* ===== WorkHub 6.0 Soft Green override ===== */
+:root{
+  --bg:#edf7f2;
+  --surface:#ffffff;
+  --ink:#1d342c;
+  --muted:#6f877e;
+  --line:#dbeae2;
+  --green:#4f9c7e;
+  --deep:#7fae9b;
+  --pale:#f4fbf7;
+  --shadow:0 10px 28px rgba(66,108,90,.08);
+}
+html,body{background:var(--bg)!important;color:var(--ink)!important}
+body[data-theme=light]{--bg:#edf7f2;--surface:#ffffff;--ink:#1d342c;--muted:#6f877e;--line:#dbeae2;--green:#4f9c7e;--deep:#7fae9b;--pale:#f4fbf7;--shadow:0 10px 28px rgba(66,108,90,.08)}
+body[data-theme=light] .side,
+.side{background:linear-gradient(180deg,#d8eee3 0%,#cde7db 100%)!important;border-right:1px solid #bfd9cc!important;box-shadow:none!important}
+.logo{border-bottom:1px solid rgba(69,107,92,.10)!important}
+.logo-mark{background:linear-gradient(135deg,#7bb596,#4f9c7e)!important;box-shadow:0 8px 22px rgba(79,156,126,.22)!important;color:#fff!important}
+.logo-title,.profile strong{color:#204137!important}
+.logo small,.profile small,.navgroup{color:#64887a!important}
+.navigation button,.collapse-side{background:transparent!important;color:#47695c!important;border-color:#c8ddd2!important}
+.navigation button:hover,.collapse-side:hover{background:#eff8f3!important;color:#23473b!important}
+.navigation button.active{background:#ffffff!important;color:#21483b!important;box-shadow:0 8px 24px rgba(77,135,110,.10)!important;inset:0 0 0 1px #d8e9e1!important}
+.navigation button .sym{background:#f3faf6!important}
+.navigation button.active .sym{background:linear-gradient(135deg,#7ab394,#5a9e80)!important}
+.profile{background:#f4fbf7!important;border:1px solid #d6e8df!important}
+.avatar{background:linear-gradient(135deg,#7ab394,#5a9e80)!important;color:#fff!important}
+.workspace{max-width:1720px!important}
+.topbar{border-bottom:1px solid #dfece5!important}
+.overline{color:#6e8c80!important}
+.topbar h1{color:#1e3d33!important}
+.topbar p{color:#6d857b!important}
+.panel,.stat,.quick-action,.kanban-task,.kanban-col,.upload-dock,.reminder-dock,.modal,.more-menu,.stock-chip,.soft,.count-primary,.noticebox,.pair-box{background:#fff!important;border:1px solid #dcebe3!important;box-shadow:var(--shadow)!important;color:var(--ink)!important}
+.home-block,.home-metric,.home-tool{background:#fff!important;border:1px solid #dcebe3!important;box-shadow:var(--shadow)!important}
+.home-warning{background:#f5fbf7!important;border:1px solid #d6e8dd!important;color:#2b5848!important}
+.home-tool-icon,.quick-action .quick-icon{background:#edf7f2!important;color:#4f9c7e!important}
+button{border-radius:12px!important}
+button.primary,.stock-export-menu>summary,.cloud-hero .hero-actions button,.home-all{background:#4f9c7e!important;border-color:#4f9c7e!important;color:#fff!important;box-shadow:none!important}
+button.primary:hover,.stock-export-menu[open]>summary{background:#448a70!important}
+button:not(.primary):not(.quick-action):not(.home-tool):not(.home-metric):not(.navigation button):not(.collapse-side):not(.stock-export-menu>summary):not(.home-all){background:#fff!important;color:#244439!important;border:1px solid #d5e7de!important}
+input,select,textarea{background:#fbfefd!important;border:1px solid #d6e8df!important;color:#1f382f!important;border-radius:12px!important}
+input:focus,select:focus,textarea:focus{border-color:#7ab394!important;box-shadow:0 0 0 3px rgba(122,179,148,.18)!important}
+.tablewrap,table,.transfer-simple-wrap,.transfer-history-list{border-color:#e2eee8!important}
+th{background:#f6fbf8!important;color:#688277!important}
+tr:hover td{background:#fbfefc!important}
+.badge.good{background:#e7f5ee!important;color:#297257!important}
+.badge.warn{background:#fff5df!important;color:#946d25!important}
+.badge.info{background:#edf7f2!important;color:#3f7160!important}
+.reminder-bell{background:#fff!important;border:1px solid #d6e8df!important;color:#244439!important}
+.reminder-bell span:last-child{background:#d86c7c!important}
+.cloud-pill,.cloud-pill.warning{background:#edf7f2!important;border:1px solid #d6e8df!important;color:#255044!important}
+.mobile-nav{background:#ffffff!important;border-top:1px solid #dcebe3!important;box-shadow:0 -6px 24px rgba(56,93,78,.08)!important}
+.mobile-nav button{color:#6f877e!important}
+.mobile-nav .active{color:#3c7f65!important}
+.footerline{color:#89a397!important}
+#quickAdd{background:#4f9c7e!important;border-color:#4f9c7e!important}
+.settings-intro,.settings-primary,.dashboard-hero,.wh-connect{background:linear-gradient(180deg,#f6fcf9 0%,#ffffff 100%)!important;border:1px solid #dcebe3!important;box-shadow:var(--shadow)!important}
+.settings-intro-icon,.transfer-label-icon{background:#edf7f2!important;color:#4f9c7e!important}
+.upload-dock{border-left:4px solid #4f9c7e!important}
+.upload-track>div,.transfer-photo-queue-track>div,.count-report-meter i,.compare-track i,.bar-track i{background:linear-gradient(90deg,#7ab394,#4f9c7e)!important}
+.home-metric-top span:first-child,.panel-eyebrow,.section-kicker,.home-eyebrow{letter-spacing:1.1px!important;color:#6c887b!important}
+.home-task-status,.wh-day-chip.green,.stock-online-label{background:#edf7f2!important;color:#39745d!important}
+.home-task-status.is-late,.qty-danger,.badge.bad{background:#fff1f2!important;color:#bd5e6d!important}
+.wh-open{background:#edf7f2!important;color:#39745d!important}
+#cloudLiveStatus{color:#21483b!important}
+@media(max-width:750px){
+  .side{background:#d8eee3!important}
+  .topbar{background:transparent!important}
+  .panel,.transfer-workspace .panel{border-radius:16px!important}
+  .topright .cloud-pill{max-width:180px!important}
+}
+
 </style>
 <style>
 
@@ -638,26 +711,26 @@ body[data-theme=dark] .transfer-count-bubble{background:#253250;color:#c1cce0}
 </head>
 <body>
 <div class="app"><aside class="side">
-  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>WORKSPACE · 5.8.0</small></div></div>
+  <div class="logo"><div class="logo-mark">W.</div><div><div class="logo-title">WorkHub<span class="brand-period">.</span></div><small>SOFT GREEN · 6.0</small></div></div>
   <button class="collapse-side" type="button" data-action="toggle-sidebar" aria-label="Thu gọn hoặc mở rộng menu">☰ <span>Thu gọn menu</span></button><nav class="navigation" id="nav" aria-label="Điều hướng chính"></nav>
   <div class="profile"><div class="avatar" id="avatar">T</div><div><strong id="profileName">Tài khoản cá nhân</strong><small id="profileEmail">Lưu trên thiết bị này</small></div></div>
 </aside><main class="workspace">
-  <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB <span class="wh-spark">✦</span> DAILY SPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Tất cả công việc, trong một nơi</p></div><div class="topright"><button class="wh-command" type="button" data-action="quick-open" title="Tìm nhanh chức năng · Ctrl+K" aria-label="Mở tìm nhanh">⌕ <span>Tìm nhanh</span><kbd>⌘K</kbd></button><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Thêm công việc</button></div></header>
+  <header class="topbar"><div class="headline"><div class="overline" id="todayLabel">WORKHUB <span class="wh-spark">✦</span> SOFT GREEN SPACE</div><h1 id="pageTitle">Tổng quan</h1><p id="pageSub">Dữ liệu kho và công việc, gọn trong một giao diện</p></div><div class="topright"><button class="wh-command" type="button" data-action="quick-open" title="Tìm nhanh chức năng · Ctrl+K" aria-label="Mở tìm nhanh">⌕ <span>Tìm nhanh</span><kbd>⌘K</kbd></button><button class="reminder-bell" type="button" data-action="reminder-open" aria-label="Xem nhắc việc">🔔 <span class="bell-label">Nhắc việc</span><span class="hidden" id="reminderCount">0</span></button><button class="cloud-pill warning" id="cloudTopStatus" data-action="cloud-connect" type="button" title="Bấm để kết nối Google ngay, không cần vào Cài đặt">↗ Kết nối Google</button><button class="primary" id="quickAdd" data-action="add" data-kind="tasks">+ Tạo công việc</button></div></header>
   <div id="globalBanner" class="banner warn">Chưa kết nối Google.</div>
   <div id="content"></div>
-  <div class="footerline">WorkHub 5.8.0 · Simple Workspace</div>
+  <div class="footerline">WorkHub 6.0 · Soft Green Warehouse</div>
 </main></div>
 <div id="moreMenu" class="more-menu hidden" aria-label="Các mục WorkHub khác"><div class="more-menu-title">Đi đến</div><div class="more-menu-grid"><button data-page="count">Kiểm kho</button><button data-page="mistakes">Giao sai / PIC</button><button data-page="reports">Báo cáo</button><button data-page="settings">Cài đặt</button></div></div><nav id="mobileNav" class="mobile-nav" aria-label="Thanh điều hướng điện thoại"></nav>
 <dialog class="modal" id="modal"><div class="modalinner"><div class="modalhead"><h2 id="modalTitle">Thông tin</h2><button class="small" type="button" data-action="close-modal">✕</button></div><form id="editForm"><div id="modalFields" class="form-grid"></div><div class="modalfoot"><button class="danger" type="button" id="deleteBtn" data-action="delete-record">Xóa</button><div class="flex"><button type="button" data-action="close-modal">Hủy</button><button type="submit" class="primary">Lưu thông tin</button></div></div></form></div></dialog>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-<dialog id="whQuick" class="wh-quick-dialog" aria-label="Tìm nhanh chức năng"><div class="wh-quick-inner"><div class="wh-quick-head"><span>⌕</span><input id="whQuickSearch" autocomplete="off" placeholder="Tìm trang hoặc thao tác…" aria-label="Tìm chức năng"><button type="button" data-action="quick-close" aria-label="Đóng">✕</button></div><div class="wh-quick-results" id="whQuickResults"></div><div class="wh-quick-footer"><span>↵ Mở trang</span><span>ESC Đóng</span></div></div></dialog>
+<dialog id="whQuick" class="wh-quick-dialog" aria-label="Tìm nhanh chức năng"><div class="wh-quick-inner"><div class="wh-quick-head"><span>⌕</span><input id="whQuickSearch" autocomplete="off" placeholder="Tìm trang, SKU, mã đơn hoặc thao tác…" aria-label="Tìm chức năng"><button type="button" data-action="quick-close" aria-label="Đóng">✕</button></div><div class="wh-quick-results" id="whQuickResults"></div><div class="wh-quick-footer"><span>↵ Mở trang</span><span>ESC Đóng</span></div></div></dialog>
 <section class="reminder-dock hidden" id="reminderDock" aria-label="Các công việc đến giờ nhắc" aria-live="polite"><div class="reminder-dock-head"><h3>🔔 Nhắc việc đến hạn</h3><button type="button" class="small" data-action="reminder-close">✕</button></div><div id="reminderDockContent"></div><p class="reminder-hint">Thông báo trong WorkHub hoạt động khi trang đang mở. Đã nhắc một lần sẽ không xuất hiện lại trên thiết bị này.</p></section>
-<section id="uploadDock" class="upload-dock hidden" role="status" aria-label="Tiến độ tải video Google Drive" aria-live="polite" aria-atomic="false">
- <div class="upload-dock-head"><div><strong id="uploadDockTitle">Hàng đợi video hàng hoàn</strong><small id="uploadDockName"></small></div><span id="uploadDockBadge" class="upload-dock-badge">0%</span></div>
+<section id="uploadDock" class="upload-dock hidden" role="status" aria-label="Tiến độ tải ảnh và video Google Drive" aria-live="polite" aria-atomic="false">
+ <div class="upload-dock-head"><div><strong id="uploadDockTitle">Trung tâm tải tệp</strong><small id="uploadDockName"></small></div><span id="uploadDockBadge" class="upload-dock-badge">0%</span></div>
  <div class="upload-track" role="progressbar" aria-label="Tiến độ tải video" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="uploadDockTrack"><div id="uploadDockBar"></div></div>
  <div class="upload-dock-state" id="uploadDockState">Đang chuẩn bị…</div>
  <div id="uploadQueueList" class="upload-queue-list"></div><div class="upload-dock-actions"><button type="button" data-action="upload-retry" id="uploadRetry" class="hidden">↻ Thử lại</button><button type="button" data-action="upload-backup" id="uploadBackup" class="hidden">↓ Lưu video dự phòng</button><button type="button" data-action="upload-notify" id="uploadNotify" class="hidden">Bật thông báo</button><button type="button" data-action="upload-dismiss" id="uploadDismiss" class="hidden">Đóng thông báo</button></div>
- <div class="upload-dock-alert" id="uploadDockHint">Giữ trang WorkHub đang mở; có thể chuyển tab trong ứng dụng.</div>
+ <div class="upload-dock-alert" id="uploadDockHint">Giữ WorkHub đang mở trong lúc tải. Trên iPhone có thể tiếp tục thao tác trong ứng dụng, nhưng không nên đóng Safari cho đến khi hoàn tất.</div>
 </section>
 
 <script>
@@ -666,7 +739,7 @@ body[data-theme=dark] .transfer-count-bubble{background:#253250;color:#c1cce0}
 const DEFAULT_GOOGLE_CLIENT_ID='329870030414-o0qt93i72dllogp7b20cbj0tt9ce9hjv.apps.googleusercontent.com';
 const DB_NAME='workhub_personal_v51', DB_STORE='kv', KEYS=['tasks','partners','operations','handoffs','issues','mistakes','stock','counts','returns','transfers','settings'];
 const MENU=[['dashboard','⌂','Tổng quan'],['tasks','☑','Công việc'],['stock','▦','Tồn kho'],['count','▤','Kiểm kho'],['returns','▣','Hàng hoàn & video'],['transfers','⇄','Luân chuyển'],['mistakes','⚠','Giao sai / PIC'],['chip','◈','Đinh & Chip'],['reports','◷','Báo cáo'],['settings','⚙','Cài đặt']];
-const titles={dashboard:['Tổng quan','Việc cần xử lý và công cụ thường dùng'],tasks:['Công việc','Việc hôm nay và sắp tới'],stock:['Tồn kho Haravan','Tra SKU · So sánh cửa hàng'],count:['Kiểm kho','Đối chiếu tồn thực tế'],returns:['Hàng hoàn & video','Quét đơn · Quay video'],transfers:['Luân chuyển Online ↔ cửa hàng','Phiếu soạn · Lịch sử · PDF'],mistakes:['Giao sai / PIC','Theo dõi loại lỗi, PIC, chi phí phát sinh'],chip:['Tỷ lệ đinh & chip','Trọng lượng · Số lượng · Chênh lệch'],reports:['Báo cáo','Số liệu & biểu đồ'],settings:['Cài đặt & sao lưu','Tài khoản · Đồng bộ · Sao lưu']};
+const titles={dashboard:['Tổng quan','Màn hình điều hành kho dịu mắt và tối giản'],tasks:['Công việc','Việc hôm nay và sắp tới'],stock:['Tồn kho Haravan','Tra SKU · So sánh cửa hàng'],count:['Kiểm kho','Đối chiếu tồn thực tế'],returns:['Hàng hoàn & video','Quét đơn · Quay video'],transfers:['Luân chuyển Online ↔ cửa hàng','Soạn hàng · Ảnh phiếu · PDF'],mistakes:['Giao sai / PIC','Theo dõi loại lỗi, PIC, chi phí phát sinh'],chip:['Tỷ lệ đinh & chip','Trọng lượng · Số lượng · Chênh lệch'],reports:['Báo cáo','Số liệu & biểu đồ'],settings:['Cài đặt & sao lưu','Tài khoản · Đồng bộ · Sao lưu']};
 const schema={
  tasks:{label:'công việc',fields:[['title','Tên công việc','text',true],['project','Dự án / nhóm','text'],['owner','Người phụ trách','text'],['status','Trạng thái','select',false,['Chưa làm','Đang làm','Chờ phản hồi','Hoàn thành']],['priority','Ưu tiên','select',false,['Bình thường','Cao','Khẩn']],['due','Hạn hoàn thành','date'],['followup','Ngày nhắc lại','date'],['remindTime','Giờ nhắc (giờ Việt Nam)','time'],['remindCycle','Chu kỳ nhắc','select',false,['Một lần']],['remindWeb','Thông báo ngay trong WorkHub','checkbox'],['remindPhone','Nhắc trên điện thoại qua Google Calendar','checkbox'],['notes','Ghi chú','textarea']]},
  partners:{label:'đối tác vận chuyển',fields:[['name','Đối tác','text',true],['service','Dịch vụ','text'],['contact','Đầu mối liên hệ / SĐT','text'],['email','Email liên hệ','email'],['channel','Kênh sử dụng','select',false,['Shopee','Website','Quốc tế','Khác']],['status','Tình trạng hợp tác','select',false,['Đang sử dụng','Đang liên hệ','Chờ báo giá','Đang thử nghiệm','Ngưng']],['price','Ghi chú giá cước','text'],['followup','Ngày nhắc lại','date'],['notes','Nội dung trao đổi','textarea']]},
@@ -683,11 +756,11 @@ const uid=()=>crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(
 const arrays=['tasks','partners','operations','handoffs','issues','mistakes','counts','returns','transfers'];
 let db, data={tasks:[],partners:[],operations:[],handoffs:[],issues:[],mistakes:[],stock:[],counts:[],returns:[],transfers:[],settings:{name:'Tuấn',email:'',companyEmail:'',sheetUrl:'',stockUpdated:''}},page='dashboard',editing=null,scan=null,camStream=null,recorder=null,recChunks=[],videoBlob=null,videoUrl='',stockQuery='',countBatch='',stockWarehouse='',stockSize='',videoWasDownloaded=false;
 
-const UI_KEY='workhub_ui_54';
-let ui={theme:'dark',sidebar:false,taskView:'table',recordFilters:{},stockSort:'match',stockQtyBasis:'available',stockQtyMin:'',stockQtyMax:'',stockAdvancedOpen:false,countDraft:{user:'',warehouse:'',query:''},returnHistoryFilter:'',dateViews:{returns:{mode:'week'},mistakes:{mode:'week'},counts:{mode:'week'}}};
+const UI_KEY='workhub_ui_60';
+let ui={theme:'light',sidebar:false,taskView:'table',recordFilters:{},stockSort:'match',stockQtyBasis:'available',stockQtyMin:'',stockQtyMax:'',stockAdvancedOpen:false,countDraft:{user:'',warehouse:'',query:''},returnHistoryFilter:'',dateViews:{returns:{mode:'week'},mistakes:{mode:'week'},counts:{mode:'week'}}};
 try{const stored=JSON.parse(localStorage.getItem(UI_KEY)||'{}');ui={...ui,...stored,recordFilters:stored.recordFilters||{},dateViews:stored.dateViews||ui.dateViews}}catch{}
 function uiSave(){try{localStorage.setItem(UI_KEY,JSON.stringify({theme:ui.theme,sidebar:ui.sidebar,taskView:ui.taskView,recordFilters:ui.recordFilters,stockSort:ui.stockSort,stockQtyBasis:ui.stockQtyBasis,stockQtyMin:ui.stockQtyMin,stockQtyMax:ui.stockQtyMax,dateViews:ui.dateViews}))}catch{}}
-try{if(localStorage.getItem('workhub_neo_minimal_v1')!=='yes'){ui.theme='dark';localStorage.setItem('workhub_neo_minimal_v1','yes');uiSave()}}catch{}
+try{if(localStorage.getItem('workhub_soft_green_v60')!=='yes'){ui.theme='light';localStorage.setItem('workhub_soft_green_v60','yes');uiSave()}}catch{}
 // Pairing link contains only Google resource IDs; never contains OAuth credentials.
 function parseDevicePair(){
  const raw=String(location.hash||'');if(!raw.startsWith('#wh-link='))return null;
@@ -714,7 +787,7 @@ async function cloudAcceptPair(){
  try{data.settings.cloudSheetId=pairing.sheet;data.settings.cloudDriveFolderId=pairing.folder;data.settings.cloudRevs={};await cloudPreflight();await cloudSaveConfig();devicePairPending=null;cloudUpdateLinks();return true}
  catch(e){data.settings.cloudSheetId=prior.sheet;data.settings.cloudDriveFolderId=prior.folder;data.settings.cloudRevs=prior.revs;devicePairPending=null;throw e}
 }
-function applyUi(){document.body.dataset.theme=ui.theme==='dark'?'dark':'light';document.body.classList.toggle('compact',!!ui.sidebar);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',ui.theme==='dark'?'#0b1020':'#f7f8fc')}
+function applyUi(){document.body.dataset.theme=ui.theme==='dark'?'dark':'light';document.body.classList.toggle('compact',!!ui.sidebar);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',ui.theme==='dark'?'#1f3a33':'#edf7f2')}
 
 const WH_ICON_PATHS={
  home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-7h6v7"/>',
@@ -850,7 +923,7 @@ function renderDashboard(){
         <div class="home-tasks">${tasks.length?taskRows:`<div class="home-task-empty">${whIcon('check',28)}<strong>Không có việc đang chờ</strong><span>Bạn đã xử lý xong các công việc hiện tại.</span></div>`}</div>
       </section>
       <section class="home-block home-tools">
-        <div class="home-block-head"><div><span class="home-eyebrow">THAO TÁC NHANH</span><h2>Công cụ kho</h2><p>Chọn chức năng bạn cần</p></div></div>
+        <div class="home-block-head"><div><span class="home-eyebrow">THAO TÁC NHANH</span><h2>Công cụ kho</h2><p>Quét mã · tra tồn · kiểm kho · luân chuyển · theo dõi tải tệp</p></div></div>
         <div class="home-tool-list">
           <button type="button" class="home-tool" data-page="stock"><span class="home-tool-icon tool-blue">${whIcon('scan',21)}</span><span>Tra cứu tồn <small>SKU · Barcode · Size</small></span>${whIcon('arrow',17)}</button>
           <button type="button" class="home-tool" data-page="count"><span class="home-tool-icon tool-mint">${whIcon('count',21)}</span><span>Kiểm kho <small>Ghi nhận số thực tế</small></span>${whIcon('arrow',17)}</button>
