@@ -1316,7 +1316,8 @@ function transferPhotoQueueUi(){
 }
 function transferQueueProgress(message,percent){transferPhotoProgress=message;transferPhotoPercent=percent;transferPhotoQueueUi();const state=document.getElementById('transferPhotoState');if(state)state.textContent=message}
 function transferBeginPhotoUpload(){
- if(transferPhotoUploading)return;
+ if(transferPhotoUploading){toast('Ảnh đang được tải lên Drive. Xem tiến độ ở góc màn hình.');return;}
+ if(!transferPrepPhotos.length){toast('Bạn chưa chọn ảnh. Hãy bấm Chọn ảnh rồi chọn ảnh trong thư viện.',true);return;}
  // Intentionally do not await this promise in the click handler: UI remains usable.
  transferUploadBatchPhotos().catch(err=>{
   transferPhotoQueueState='error';transferPhotoQueueError=err?.message||String(err);transferPhotoQueueUi();
@@ -1347,7 +1348,7 @@ function transferPhotoSelect(input,kind){
  // Update its DOM state immediately; no full render needed (keeps the current file selection).
  if(!archive){
   const saveButton=document.querySelector('[data-action="transfer-photo-batch"]');
-  if(saveButton){saveButton.disabled=!transferPrepPhotos.length||transferPhotoUploading;saveButton.setAttribute('aria-disabled',String(saveButton.disabled));}
+  if(saveButton){saveButton.disabled=transferPhotoUploading;saveButton.setAttribute('aria-disabled',String(saveButton.disabled));}
   const clearButton=document.querySelector('[data-action="transfer-photo-clear"]');
   if(!clearButton&&transferPrepPhotos.length){
    const b=document.createElement('button');b.type='button';b.className='small';b.dataset.action='transfer-photo-clear';b.textContent='Bỏ chọn';
@@ -1520,7 +1521,7 @@ function renderTransfers(){
  <div class="tablewrap transfer-prep-wrap"><table class="transfer-prep-table"><thead><tr><th>Mã / Size</th><th>Sản phẩm</th><th>SL đề xuất</th><th>Khả dụng HT kho xuất</th><th>Thực gửi</th></tr></thead><tbody>${batch.map(x=>{const m=transferResolved(x),num=transferTrackPending(x),value=transferDrafts.get(x.id)||'',duplicated=duplicateKeys.has(transferDuplicateKey(x));return `<tr class="${duplicated?'transfer-duplicate':''}"><td><b>${esc(x.code)}</b>${duplicated?'<small class="transfer-duplicate-label">⚠ Mã / size trùng trong phiếu</small>':''}<small>Size ${esc(x.size)}</small><small>${esc(m.chosen?.sku||x.sourceSku||'')}</small></td><td><b>${esc(m.chosen?.product||x.product||'Sản phẩm chưa rõ')}</b><small>${esc(x.variantHint||'')}</small>${m.choices.length>1?`<label class="transfer-ambiguous">Chọn SKU đúng<select data-transfer-sku="${esc(x.id)}"><option value="">Chưa chọn (${m.choices.length} SKU)</option>${transferOpt(m.choices.map(y=>y.sku),x.resolvedSku||'')}</select></label>`:''}</td><td class="transfer-number">${number(x.proposed)}${num<x.proposed?`<small>Còn chờ ${number(num)}</small>`:''}</td><td class="transfer-number">${m.available===null?'<span class="transfer-unmatched" title="'+esc(m.status)+'">'+esc(m.status)+'</span>':number(m.available)}</td><td><input type="number" min="0" step="1" inputmode="numeric" data-transfer-draft="${esc(x.id)}" value="${esc(value)}" placeholder="Để trống" aria-label="Thực gửi ${esc(x.code)} size ${esc(x.size)}"></td></tr>`}).join('')}</tbody></table></div>
  <div class="transfer-batch-evidence"><div class="transfer-evidence-heading"><div><span class="transfer-label-icon">${whIcon('count',18)}</span><div><h3>Ảnh phiếu của đợt</h3><p>Chụp các trang đã điền · Không cần nhập Thực gửi</p></div></div><span class="transfer-count-bubble">${number(transferBatchPhotos(batch).length)} ảnh đã lưu</span></div>
  ${transferPhotoThumbs(transferBatchPhotos(batch))}
- <div class="transfer-evidence-controls"><label class="transfer-photo-choose">${whIcon('plus',16)} Chọn ảnh<input type="file" id="transferPrepPhotoInput" accept="image/*" multiple aria-label="Chọn nhiều ảnh phiếu giấy của cùng một đợt"></label><small id="transferPrepSelection">${transferPrepPhotos.length?transferPrepPhotos.length+' ảnh chờ tải':'Có thể chọn nhiều trang cùng lúc'}</small>${transferPrepPhotos.length?'<button type="button" class="small" data-action="transfer-photo-clear">Bỏ chọn</button>':''}<button type="button" class="primary" data-action="transfer-photo-batch" ${!transferPrepPhotos.length||transferPhotoUploading?'disabled':''}>${whIcon('cloud',17)} Lưu ảnh lên Drive</button></div>
+ <div class="transfer-evidence-controls"><label class="transfer-photo-choose">${whIcon('plus',16)} Chọn ảnh<input type="file" id="transferPrepPhotoInput" accept="image/*" multiple aria-label="Chọn nhiều ảnh phiếu giấy của cùng một đợt"></label><small id="transferPrepSelection">${transferPrepPhotos.length?transferPrepPhotos.length+' ảnh chờ tải':'Có thể chọn nhiều trang cùng lúc'}</small>${transferPrepPhotos.length?'<button type="button" class="small" data-action="transfer-photo-clear">Bỏ chọn</button>':''}<button type="button" class="primary" data-action="transfer-photo-batch" ${transferPhotoUploading?'disabled':''}>${whIcon('cloud',17)} Lưu ảnh lên Drive</button></div>
  <small id="transferPhotoState" class="transfer-photo-state" role="status">${esc(transferPhotoProgress||'Ảnh được lưu riêng theo đợt đề xuất, không làm thay đổi số lượng hàng.')}</small></div>
   <div class="transfer-savebar"><span class="note">Chỉ nhập Thực gửi khi đã đóng hàng.</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving?'disabled':''}>${whIcon('check',17)} Lưu số thực gửi</button></div></section>`}
  <section class="panel transfer-archive"><div class="transfer-section-heading"><div><span class="panel-eyebrow">TRA CỨU</span><h2>Lịch sử đã gửi hàng</h2></div><span class="badge info">${number(histAll.length)} lần gửi</span></div>
@@ -1827,7 +1828,16 @@ async function wh575ChangeHistory(mode){
   throw e;
  }finally{wh575HistoryMutationBusy=false;if(page==='transfers')render()}
 }
-document.addEventListener('change',event=>{const id=event.target?.id;if(id!=='transferPrepPhotoInput'&&id!=='transferArchivePhotoInput')return;try{transferPhotoSelect(event.target,id==='transferArchivePhotoInput'?'archive':'prep')}catch(err){event.target.value='';toast(err.message,true)}});
+// Safari iOS may fire file input/change in different order. Receive both safely.
+function transferHandleSelectedFiles(event){
+ const id=event.target?.id;
+ if(id!=='transferPrepPhotoInput'&&id!=='transferArchivePhotoInput')return;
+ if(!event.target.files?.length)return;
+ try{transferPhotoSelect(event.target,id==='transferArchivePhotoInput'?'archive':'prep')}
+ catch(err){event.target.value='';toast('Không chọn được ảnh: '+(err.message||err),true)}
+}
+document.addEventListener('input',transferHandleSelectedFiles,true);
+document.addEventListener('change',transferHandleSelectedFiles,true);
 async function transferClickAction(action,el){switch(action){case 'transfer-import':await transferImport();break;case 'transfer-link':await transferLink();break;case 'transfer-source-auth':await transferAuthorizeSource();break;case 'transfer-refresh':await transferRefresh();break;case 'transfer-save':await transferSave();break;case 'transfer-send':await transferRecordDispatch();break;case 'transfer-pdf':await transferPdf(false);break;case 'transfer-pdf-dispatch':await transferPdf(true);break;case 'transfer-photo-history':await transferAttachPhotosToGroup(transferHistorySelected,transferArchivePhotos,'archive');break;case 'transfer-photo-batch':transferBeginPhotoUpload();break;case 'transfer-photo-clear':transferClearPrep();break;case 'transfer-show-history':transferHistorySelected=el?.dataset.id||'';transferArchivePhotos=[];transferPhotoProgress='';wh575HistoryEditing='';render();break;case 'transfer-clear-history':transferHistoryDate='';transferHistoryShop='';transferHistoryQuery='';render();break;case 'transfer-history-edit':wh575HistoryEditing=transferHistorySelected;render();break;case 'transfer-history-cancel':wh575HistoryEditing='';render();break;case 'transfer-history-save':await wh575ChangeHistory('edit');break;case 'transfer-history-delete':await wh575ChangeHistory('delete');break;case 'transfer-csv':transferCsv();break;default:return false}return true}
 
 
