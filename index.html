@@ -1321,13 +1321,28 @@ function transferPhotoSelect(input,kind){
  input.value='';
 }
 function transferClearPrep(){transferPrepPhotos=[];transferPrepBatchKey='';transferPhotoProgress='';render()}
+// 5.7.9: wait for a pending Sheets flush instead of treating an in-flight flush as a failed photo save.
+async function transferAwaitPhotoSync(){
+ if(!cloudIsReady())throw new Error('Phiên Google chưa sẵn sàng. Ảnh có thể đã lên Drive; vui lòng đăng nhập lại và đồng bộ Sheets.');
+ const limit=Date.now()+45000;
+ while((cloudSyncBusy||cloudRefreshBusy||cloudBusy)&&Date.now()<limit)await new Promise(resolve=>setTimeout(resolve,250));
+ if(cloudSyncBusy||cloudRefreshBusy||cloudBusy)throw new Error('Đồng bộ đang bận quá lâu. Ảnh đã được lưu tạm; kiểm tra đồng bộ trước khi thử lại.');
+ if(cloudDirty.has('transfers'))await cloudFlush();
+ const until=Date.now()+45000;
+ while((cloudSyncBusy||cloudDirty.has('transfers'))&&Date.now()<until){
+  if(!cloudSyncBusy&&cloudDirty.has('transfers'))await cloudFlush();
+  if(cloudSyncBusy||cloudDirty.has('transfers'))await new Promise(resolve=>setTimeout(resolve,350));
+ }
+ if(cloudDirty.has('transfers')||cloudBlocked)throw new Error('Ảnh đã được lưu tạm nhưng Google Sheets chưa xác nhận. Không chụp lại; kiểm tra mục Đồng bộ.');
+}
 async function transferUploadBatchPhotos(){
  if(transferPhotoUploading)throw new Error('Đang tải ảnh, vui lòng đợi.');
  const batch=transferBatchRows(),key=transferProofKey(batch);if(!batch.length)throw new Error('Chọn đợt luân chuyển trước.');
  if(!transferPrepPhotos.length)throw new Error('Chọn ít nhất một ảnh phiếu.');
  if(transferPrepBatchKey!==key)throw new Error('Bạn đã đổi đợt. Hãy chọn ảnh lại cho đúng phiếu.');
  if(!cloudIsReady())throw new Error('Hãy Kết nối Google và liên kết thư mục Drive của WorkHub. Không cần nhập Thực gửi.');
- if(cloudBlocked||cloudDirty.has('transfers'))throw new Error('Lịch sử luân chuyển còn chờ đồng bộ. Hãy đồng bộ trước khi thêm ảnh.');
+ if(cloudBlocked)throw new Error('Google Sheets đang bị khóa đồng bộ. Hãy kiểm tra trong Cài đặt.');
+ if(cloudDirty.has('transfers'))await transferAwaitPhotoSync();
  const files=[...transferPrepPhotos],prevPhotos=transferBatchPhotos(batch);
  if(prevPhotos.length+files.length>TRANSFER_MAX_IMAGES)throw new Error('Một đợt lưu tối đa '+TRANSFER_MAX_IMAGES+' ảnh. Đã có '+prevPhotos.length+' ảnh.');
  const first=batch[0],proofId='WH-PROOF-'+transferHash(key),nameBase='Phieu_'+transferAutoNumber(first).replace(/[^A-Za-z0-9_-]/g,'');
@@ -1349,7 +1364,7 @@ async function transferUploadBatchPhotos(){
    else entries.push({id:proofId,type:'batch-proof',proofKey:key,photos:[item],at:new Date().toISOString()});
    first.shipments=JSON.stringify(entries);first.updatedAt=new Date().toISOString();
    await persist('transfers'); // Retain successful Drive upload reference even when Sheets is temporarily unavailable.
-   try{await cloudFlush()}catch(err){throw new Error('Ảnh đã lên Drive và lưu tạm trên máy, nhưng Sheets chưa xác nhận: '+(err.message||err))}
+   try{await transferAwaitPhotoSync()}catch(err){throw new Error('Ảnh đã lên Drive và lưu tạm trên máy, nhưng Sheets chưa xác nhận: '+(err.message||err))}
    if(cloudDirty.has('transfers')||cloudBlocked)throw new Error('Ảnh đã lên Drive nhưng Sheet chưa xác nhận. Đồng bộ lại trước khi tiếp tục; không tải ảnh đã lưu lần nữa.');
    complete++;transferPrepPhotos=transferPrepPhotos.filter(x=>x!==f);
   }
@@ -1363,7 +1378,8 @@ async function transferAttachPhotosToGroup(group,files,source){
  if(transferPhotoUploading)throw new Error('Đang tải ảnh phiếu, hãy đợi hoàn tất.');
  if(!files.length)throw new Error('Hãy chọn ít nhất một ảnh phiếu đã điền.');
  if(!cloudIsReady())throw new Error('Cần Kết nối Google và liên kết thư mục Drive của WorkHub trước khi tải ảnh. Lịch sử số lượng đã lưu vẫn được giữ nguyên.');
- if(cloudBlocked||cloudDirty.has('transfers'))throw new Error('Dữ liệu Luân chuyển còn chờ/xung đột Google. Đồng bộ xong trước khi tải ảnh để tránh ghi đè.');
+ if(cloudBlocked)throw new Error('Google Sheets đang bị khóa đồng bộ. Hãy kiểm tra trong Cài đặt.');
+ if(cloudDirty.has('transfers'))await transferAwaitPhotoSync();
  const getLines=()=>data.transfers.flatMap(x=>transferShipmentEntries(x).filter(e=>(e.group||e.id)===group).map(e=>({x,e})));
  if(!getLines().length)throw new Error('Không tìm thấy lần gửi cần lưu ảnh.');
  transferPhotoUploading=true;transferPhotoPercent=0;transferPhotoProgress='Đang chuẩn bị ảnh…';if(page==='transfers')render();
@@ -1393,7 +1409,7 @@ async function transferAttachPhotosToGroup(group,files,source){
    obj.shipments=JSON.stringify(entries);obj.updatedAt=new Date().toISOString();
    await persist('transfers');
    // Sau từng ảnh, thực hiện gửi metadata lên Sheet; không tuyên bố hoàn tất khi chưa được xác nhận.
-   await cloudFlush();
+   await transferAwaitPhotoSync();
    if(cloudDirty.has('transfers')||cloudBlocked)throw new Error('Ảnh đã lên Drive nhưng link chưa được Google Sheet xác nhận. Hãy đồng bộ trước khi tải tiếp; không chọn lại ảnh đã lưu.');
    done++;
   }
