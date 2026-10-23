@@ -1373,43 +1373,63 @@ async function transferAwaitPhotoSync(){
 }
 async function transferUploadBatchPhotos(){
  if(transferPhotoUploading)throw new Error('Đang tải ảnh, vui lòng đợi.');
- const batch=transferBatchRows(),key=transferProofKey(batch);if(!batch.length)throw new Error('Chọn đợt luân chuyển trước.');
+ const batch=transferBatchRows(),key=transferProofKey(batch);
+ if(!batch.length)throw new Error('Chọn đợt luân chuyển trước.');
  if(!transferPrepPhotos.length)throw new Error('Chọn ít nhất một ảnh phiếu.');
  if(transferPrepBatchKey!==key)throw new Error('Bạn đã đổi đợt. Hãy chọn ảnh lại cho đúng phiếu.');
- if(!cloudIsReady())throw new Error('Hãy Kết nối Google và liên kết thư mục Drive của WorkHub. Không cần nhập Thực gửi.');
- if(cloudBlocked)throw new Error('Google Sheets đang bị khóa đồng bộ. Hãy kiểm tra trong Cài đặt.');
- const files=[...transferPrepPhotos],prevPhotos=transferBatchPhotos(batch);
- if(prevPhotos.length+files.length>TRANSFER_MAX_IMAGES)throw new Error('Một đợt lưu tối đa '+TRANSFER_MAX_IMAGES+' ảnh. Đã có '+prevPhotos.length+' ảnh.');
- const first=batch[0],proofId='WH-PROOF-'+transferHash(key),nameBase='Phieu_'+transferAutoNumber(first).replace(/[^A-Za-z0-9_-]/g,'');
- transferPhotoUploading=true;transferPhotoQueueState='running';transferPhotoQueueError='';transferPhotoQueueTotal=files.length;transferPhotoQueueDone=0;transferQueueProgress('Đã đưa '+files.length+' ảnh vào hàng đợi · đang kết nối Drive…',0);if(page==='transfers')render();
- let complete=0;
+ if(!cloudIsReady())throw new Error('Hãy kết nối Google và liên kết Drive trước.');
+ if(cloudBlocked)throw new Error('Google Sheets đang khóa đồng bộ. Hãy kiểm tra Cài đặt.');
+ const files=[...transferPrepPhotos],prior=transferBatchPhotos(batch);
+ if(prior.length+files.length>TRANSFER_MAX_IMAGES)throw new Error('Tối đa '+TRANSFER_MAX_IMAGES+' ảnh cho một đợt.');
+ const proofId='WH-PROOF-'+transferHash(key),nameBase='Phieu_'+transferAutoNumber(batch[0]).replace(/[^A-Za-z0-9_-]/g,'');
+ transferPhotoUploading=true;transferPhotoQueueState='running';transferPhotoQueueError='';transferPhotoQueueTotal=files.length;transferPhotoQueueDone=0;
+ transferQueueProgress('Đã xếp hàng '+files.length+' ảnh · bắt đầu xử lý…',0);
+ if(page==='transfers')render();
+ let complete=0,uploadedCount=0;
  try{
-  if(cloudDirty.has('transfers')){
-   transferQueueProgress('Đang chờ Google Sheets đồng bộ dữ liệu trước khi tải ảnh…',0);
-   await transferAwaitPhotoSync();
-  }
-  transferQueueProgress('Đang chuẩn bị gửi ảnh lên Google Drive…',0);
+  if(cloudDirty.has('transfers')){transferQueueProgress('Đang đồng bộ phiếu trước khi gửi ảnh…',0);await transferAwaitPhotoSync();}
   for(let i=0;i<files.length;i++){
    const f=files[i],fingerprint=[f.name,f.size,f.lastModified].join('|');
-   if(transferBatchPhotos(batch).some(v=>v.fingerprint===fingerprint)){complete++;transferPhotoQueueDone=complete;transferQueueProgress('Đã bỏ qua ảnh trùng '+f.name,Math.round(100*complete/files.length));continue;}
-   const current=transferBatchPhotos(batch);if(current.length>=TRANSFER_MAX_IMAGES)throw new Error('Đợt đã đủ '+TRANSFER_MAX_IMAGES+' ảnh.');
+   // Always re-read the current record. An automatic cloud refresh can replace data.transfers
+   // while a multi-photo queue is running, invalidating earlier row object references.
+   let latestRows=transferBatchRows();
+   if(transferProofKey(latestRows)!==key)throw new Error('Đợt luân chuyển đã thay đổi trong khi gửi ảnh.');
+   if(transferBatchPhotos(latestRows).some(x=>x.fingerprint===fingerprint)){
+    complete++;transferPhotoQueueDone=complete;transferPrepPhotos=transferPrepPhotos.filter(x=>x!==f);
+    transferQueueProgress('Ảnh '+(i+1)+'/'+files.length+' đã có trên Drive',Math.round(100*complete/files.length));continue;
+   }
+   const stored=transferBatchPhotos(latestRows);
+   if(stored.length>=TRANSFER_MAX_IMAGES)throw new Error('Đợt đã đủ '+TRANSFER_MAX_IMAGES+' ảnh.');
    const suffix=f.name.match(/\.(jpe?g|png|webp|heic|heif)$/i)?.[0]||'.jpg';
-   const fileName=nameBase+'_trang_'+(current.length+1)+suffix;
-   const uploaded=await cloudUploadVideo(f,fileName,(loaded,total)=>{transferQueueProgress('Đang tải ảnh '+(i+1)+'/'+files.length+' · '+Math.round(100*(complete+(total?loaded/total:0))/files.length)+'%',Math.round(100*(complete+(total?loaded/total:0))/files.length))});
-   if(!uploaded?.id)throw new Error('Drive chưa xác nhận ảnh '+f.name);
-   // Keep metadata per source proposal, not per quantity-dispatch. No new Sheet columns.
-   const entries=transferAllShipmentEntries(first),existing=entries.find(v=>v.id===proofId&&v.type==='batch-proof'&&v.proofKey===key);
-   const item={id:uploaded.id,name:f.name,size:f.size,at:new Date().toISOString(),fingerprint};
-   if(existing)existing.photos=[...(existing.photos||[]),item];
-   else entries.push({id:proofId,type:'batch-proof',proofKey:key,photos:[item],at:new Date().toISOString()});
+   const filename=nameBase+'_trang_'+String(stored.length+1).padStart(2,'0')+suffix;
+   transferQueueProgress('Đang gửi ảnh '+(i+1)+'/'+files.length+' lên Drive…',Math.round(100*complete/files.length));
+   let uploaded;
+   try{uploaded=await cloudUploadVideo(f,filename,(bytes,total)=>{
+    const partial=total?Math.min(1,bytes/total):0;
+    transferQueueProgress('Đang tải ảnh '+(i+1)+'/'+files.length+' · '+Math.round(partial*100)+'%',Math.round(100*(complete+partial)/files.length));
+   });}catch(err){throw new Error('Đã lưu '+complete+'/'+files.length+' ảnh. Ảnh '+(i+1)+' chưa tải được: '+(err?.message||err));}
+   if(!uploaded?.id)throw new Error('Drive chưa xác nhận ảnh '+(i+1)+'/'+files.length);
+   uploadedCount++;
+   // Re-read AGAIN after await: upload may take minutes on mobile; never mutate a stale object.
+   latestRows=transferBatchRows();
+   if(transferProofKey(latestRows)!==key)throw new Error('Ảnh đã lên Drive nhưng đợt hiện tại đổi. Mã file: '+uploaded.id);
+   const first=latestRows[0],entries=transferAllShipmentEntries(first);
+   let existing=entries.find(v=>v.id===proofId&&v.type==='batch-proof'&&v.proofKey===key);
+   if(!existing){existing={id:proofId,type:'batch-proof',proofKey:key,photos:[],at:new Date().toISOString()};entries.push(existing);}
+   if(!existing.photos.some(v=>v.id===uploaded.id||v.fingerprint===fingerprint))existing.photos.push({id:uploaded.id,name:f.name,size:f.size,at:new Date().toISOString(),fingerprint});
    first.shipments=JSON.stringify(entries);first.updatedAt=new Date().toISOString();
-   await persist('transfers'); // Retain successful Drive upload reference even when Sheets is temporarily unavailable.
-   // Batch Sheets confirmation after all Drive transfers, avoiding a full sync per photo.
-   complete++;transferPhotoQueueDone=complete;transferPrepPhotos=transferPrepPhotos.filter(x=>x!==f);transferQueueProgress('Đã lưu '+complete+'/'+files.length+' ảnh',Math.round(100*complete/files.length));
+   await persist('transfers');
+   complete++;transferPhotoQueueDone=complete;transferPrepPhotos=transferPrepPhotos.filter(x=>x!==f);
+   transferQueueProgress('Đã tải và ghi nhận '+complete+'/'+files.length+' ảnh',Math.round(100*complete/files.length));
   }
-  try{await transferAwaitPhotoSync()}catch(err){throw new Error('Ảnh đã được tải lên Drive và lưu thông tin tạm trên máy, nhưng Sheets chưa xác nhận: '+(err.message||err))}
-  transferPrepBatchKey='';transferPhotoQueueState='success';transferQueueProgress('Đã lưu '+complete+' ảnh lên Drive và Sheets',100);transferPhotoQueueUi();
- }finally{transferPhotoUploading=false;transferPhotoQueueUi();if(page==='transfers')render()}
+  transferQueueProgress('Đã gửi đủ '+complete+'/'+files.length+' ảnh · xác nhận Sheets…',99);
+  try{await transferAwaitPhotoSync();}catch(err){throw new Error('Đã gửi '+complete+'/'+files.length+' ảnh lên Drive; thông tin Sheets còn chờ: '+(err?.message||err));}
+  const final=transferBatchPhotos(transferBatchRows());
+  if(!files.every(f=>final.some(v=>v.fingerprint===[f.name,f.size,f.lastModified].join('|')))){
+   throw new Error('Chưa thấy đủ liên kết ảnh trong phiếu. Đã tải '+complete+'/'+files.length+'; vui lòng kiểm tra Sheets trước khi thử lại.');
+  }
+  transferPrepBatchKey='';transferPhotoQueueState='success';transferQueueProgress('Đã lưu đủ '+complete+'/'+files.length+' ảnh lên Drive và Sheets',100);transferPhotoQueueUi();
+ }finally{transferPhotoUploading=false;transferPhotoQueueUi();if(page==='transfers')render();}
 }
 
 function transferPhotoRef(ph){return 'https://drive.google.com/file/d/'+encodeURIComponent(ph.id)+'/view'}
