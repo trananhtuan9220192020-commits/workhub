@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#133a34">
-<title>WorkHub 9.1 · Night Warehouse</title>
+<title>WorkHub 9.2 · Night Warehouse</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap");
@@ -730,6 +730,12 @@ body[data-theme="light"] #content button.ref-action .ref-action-desc,
 body[data-theme="light"] #content button.ref-action .ref-action-top strong,
 body[data-theme="light"] #content button.ref-action .ref-action-bottom{color:white!important}
 body[data-theme="dark"] #content button.ref-action{color:white!important}
+
+\n/* 9.2 · Google Sheets nguồn là nguồn chuẩn số thực gửi */
+.transfer-source-line:has(.transfer-dot.active){border-color:rgba(16,185,129,.35)!important}
+.transfer-prep-table [data-transfer-draft]{border-color:#2e6b5e!important;background:#0d1b2d!important;color:#e6fff5!important;font-weight:800!important}
+.transfer-prep-table [data-transfer-draft]:focus{border-color:#25c99c!important;box-shadow:0 0 0 3px #10b98129!important}
+.transfer-savebar .note{max-width:680px;line-height:1.6}
 
 </style>
 <style>
@@ -1657,7 +1663,7 @@ function renderDashboard(){
  const pendingReturns=returns.filter(x=>x.status!=='Đã xử lý'),pendingMistakes=mistakes.filter(x=>x.status!=='Đã xử lý');
  const days=Array.from({length:7},(_,i)=>dateOffset(i-6));
  const daily=days.map(x=>({day:x,proposed:0,sent:0}));
- for(const x of transfers){const d=dateFromRecord(x.date),idx=days.indexOf(d);if(idx>=0){daily[idx].proposed+=Math.max(0,transferInt(x.proposed));daily[idx].sent+=Math.max(0,transferSentTotal(x));}}
+ for(const x of transfers){const d=dateFromRecord(x.date),idx=days.indexOf(d);if(idx>=0){daily[idx].proposed+=Math.max(0,transferInt(x.proposed));daily[idx].sent+=Math.max(0,transferTrackSent(x));}}
  const hasChart=daily.some(x=>x.proposed>0||x.sent>0);
  const peak=Math.max(1,...daily.flatMap(x=>[x.proposed,x.sent]));
  const pts=(k)=>daily.map((x,i)=>({x:48+i*98,y:206-x[k]/peak*166}));
@@ -2049,7 +2055,7 @@ let transferBatch='__init', transferPrintRef='', transferDirection='all', transf
 let transferFrom='__init', transferTo='__init',transferRequestDate='__init',transferHistoryMode='all',transferDispatchDate='',transferDispatchRef='',transferPdfDispatch='';
 let transferHistoryDate='',transferHistoryShop='',transferHistoryQuery='',transferHistorySelected='',transferHistoryTimer=0;
 const transferDrafts=new Map();let transferSourceReadToken='',transferSourceReadExpires=0,transferLastPoll=0,transferSourceStatus='',transferAutoBusy=false;
-const TRANSFER_POLL_MS=120000;
+const TRANSFER_POLL_MS=30000; // Google Sheet nguồn: kiểm tra khi mở ứng dụng, quay lại tab và mỗi 30 giây
 let transferSearchTimer=0,transferPendingEdits=false;
 const TRANSFER_STORES=['NGUYEN TRAI','LY TU TRONG','THAI PHIEN'];
 const transferRetail=v=>{const n=stockKey(v);return !!n&&!isOnlineWarehouse(v)&&!/(?:^| )(?:TONG|TAM|HU HONG|TRUNG CHUYEN|VAN PHONG)(?:$| )/.test(n)&&!n.includes('KHO TONG')};
@@ -2075,7 +2081,7 @@ function transferImportRows(rows){
   if(!transferRelevant(from,to)){skipped.other++;continue}
   const code=transferCode(r[5]),proposed=transferNumber(r[9]),size=transferSize(r[8]),batch=String(r[0]??'').trim()||'TAM-'+transferDate(r[1])+'-'+from+'-'+to;
   if(!code||!size||!Number.isInteger(proposed)||proposed<0){skipped.bad++;continue}
-  const item={batch,date:transferDate(r[1]),receivedDate:transferDate(r[2]),from,to,code,size,variantHint:String(r[8]??'').trim(),product:String(r[7]??'').trim(),sourceSku:String(r[6]??'').trim(),proposed,sourceSent:transferInt(r[10]),received:transferInt(r[11]),sent:0,shipments:'[]',requester:String(r[15]??'').trim(),notes:String(r[16]??'').trim(),resolvedSku:'',updatedAt:''};
+  const item={batch,date:transferDate(r[1]),receivedDate:transferDate(r[2]),from,to,code,size,variantHint:String(r[8]??'').trim(),product:String(r[7]??'').trim(),sourceSku:String(r[6]??'').trim(),proposed,sourceSent:transferInt(r[10]),received:transferInt(r[11]),sourceRow:i+1,sent:0,shipments:'[]',requester:String(r[15]??'').trim(),notes:String(r[16]??'').trim(),resolvedSku:'',updatedAt:''};
   const key=[batch,from,to,code,size,item.product].join('|');const occur=(duplicate.get(key)||0)+1;duplicate.set(key,occur);item.id=transferId(item,occur);found.push(item);
  }
  if(!found.length)throw new Error('Không có dòng Kho Onl ↔ cửa hàng hợp lệ trong file. Kiểm tra cột Kho xuất, Kho nhận, mã 4 số và size.');
@@ -2086,7 +2092,10 @@ function transferBatchProofEntries(x){return transferAllShipmentEntries(x).filte
 function transferShipmentEntries(x){return transferAllShipmentEntries(x).filter(v=>v.type!=='batch-proof')}
 function transferEntriesWithLegacy(x){const entries=transferShipmentEntries(x);if(!entries.length&&transferInt(x.sent)>0)return [{id:'legacy-'+x.id,group:'legacy-'+x.batch,date:x.date||'',qty:transferInt(x.sent),legacy:true,note:'Số đã lưu trước 5.7.5, cần đối soát'}];return entries}
 function transferSentTotal(x){return transferEntriesWithLegacy(x).reduce((n,v)=>n+transferInt(v.qty),0)}
-function transferPending(x){return Math.max(0,transferInt(x.proposed)-transferSentTotal(x))}
+// File nguồn Google Sheets là nơi xác nhận SỐ GỬI hiện tại; lịch sử WorkHub chỉ dùng cho phiếu cũ.
+function transferSourceIsSheet(){return (data.settings.transferSourceKind==='sheet'||(!data.settings.transferSourceKind&&!!data.settings.transferSourceSheetId))&&!!(data.settings.transferSourceSheetId||data.settings.transferSourceId)}
+function transferCurrentSent(x){return transferSourceIsSheet()?transferInt(x.sourceSent):Math.max(transferInt(x.sourceSent),transferSentTotal(x))}
+function transferPending(x){return Math.max(0,transferInt(x.proposed)-transferCurrentSent(x))}
 function transferAllWarehouseChoices(){return [...new Set((data.transfers||[]).flatMap(x=>[x.from,x.to]).filter(Boolean))].sort((a,b)=>isOnlineWarehouse(a)?-1:isOnlineWarehouse(b)?1:a.localeCompare(b,'vi'))}
 function transferRoutes(){const all=(data.transfers||[]);const origins=[...new Set(all.map(x=>x.from).filter(Boolean))].sort((a,b)=>isOnlineWarehouse(a)?-1:isOnlineWarehouse(b)?1:a.localeCompare(b,'vi'));if(transferFrom==='__init'||(transferFrom&&!origins.includes(transferFrom)))transferFrom=origins.find(isOnlineWarehouse)||origins[0]||'';
  const availableTos=[...new Set(all.filter(x=>!transferFrom||x.from===transferFrom).map(x=>x.to))].sort((a,b)=>a.localeCompare(b,'vi'));if(transferTo==='__init'||(transferTo&&!availableTos.includes(transferTo)))transferTo=availableTos[0]||'';
@@ -2142,13 +2151,13 @@ function transferResolved(item){
  const chosen=selected||(choices.length===1?choices[0]:null);
  return {choices,chosen,available:chosen?chosen.available:null,status:chosen?'OK':transferMatchStatus(item,choices)};
 }
-function transferTotals(rows){const t={proposed:0,sent:0,pending:0,issues:0};for(const x of rows){t.proposed+=transferInt(x.proposed);t.sent+=transferSentTotal(x);t.pending+=transferPending(x);const v=transferResolved(x);if(!v.chosen||transferSentTotal(x)>x.proposed||(transferInt(x.sourceSent)>0&&transferInt(x.sourceSent)!==transferSentTotal(x)))t.issues++}return t}
+function transferTotals(rows){const t={proposed:0,sent:0,pending:0,issues:0};for(const x of rows){t.proposed+=transferInt(x.proposed);t.sent+=transferTrackSent(x);t.pending+=transferPending(x);const v=transferResolved(x);if(!v.chosen||transferTrackSent(x)>x.proposed)t.issues++}return t}
 function transferOpt(list,sel,formatter=(v)=>v){return list.map(x=>`<option value="${esc(x)}" ${x===sel?'selected':''}>${esc(formatter(x))}</option>`).join('')}
 function transferHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36).toUpperCase().padStart(6,'0').slice(0,6)}
 function transferShortPlace(v){if(isOnlineWarehouse(v))return 'ONL';const tokens=stockKey(v).replace(/^KHO /,'').split(' ').filter(Boolean);return (tokens.map(x=>x[0]).join('')||'CH').slice(0,4)}
 function transferAutoNumber(row,dispatch){const date=(dispatch?.date||row.date||today()).replace(/-/g,'');const route=transferShortPlace(row.from)+'-'+transferShortPlace(row.to);const key=[row.batch,row.date,row.from,row.to,dispatch?.id||'REQUEST'].join('|');return 'LC-'+date+'-'+route+'-'+transferHash(key)}
-function transferTrackSent(x){return Math.max(transferInt(x.sourceSent),transferSentTotal(x))}
-function transferTrackPending(x){return Math.max(0,transferInt(x.proposed)-transferTrackSent(x))}
+function transferTrackSent(x){return transferCurrentSent(x)}
+function transferTrackPending(x){return transferPending(x)}
 // Neo Minimal · Hình phiếu giấy, gắn theo MÃ NHÓM LẦN GỬI (không phải mã đề xuất).
 let transferPrepPhotos=[],transferArchivePhotos=[],transferPhotoUploading=false,transferPrepBatchKey='';
 let transferPhotoProgress='',transferPhotoPercent=0;
@@ -2418,18 +2427,18 @@ function renderTransfers(){
  <section class="panel transfer-simple-hero"><div class="panel-head"><div><span class="panel-eyebrow">LUÂN CHUYỂN ONLINE ↔ CỬA HÀNG</span><h2>Luân chuyển hàng</h2></div><span class="badge info">${number((data.transfers||[]).length)} mã đề xuất</span></div>
  
  <div class="transfer-selector-grid"><label>Kho xuất<select id="transferFrom">${transferOpt(origins,transferFrom)}</select></label><label>Kho nhận<select id="transferTo">${transferOpt(availableTos,transferTo)}</select></label><label>Ngày đề xuất<select id="transferRequestDate">${transferOpt(dates,transferRequestDate,viDate)}</select></label><label>Phiếu / Nhóm đề xuất<select id="transferBatch">${transferOpt(batches,transferBatch,v=>v.startsWith('TAM-')?'Đề xuất ngày '+viDate(transferRequestDate):v)}</select></label></div>
- <div class="transfer-source-line"><span class="transfer-dot ${linked?'active':''}"></span><span>${linked?esc(transferSourceStatus||'Nguồn đã liên kết · Kiểm tra tự động khi web mở'):'Chưa liên kết Sheet luân chuyển'}</span><button type="button" class="small" data-action="transfer-refresh" ${!linked||transferSourceBusy?'disabled':''}>↻ Cập nhật từ Sheet</button><details class="transfer-source-settings"><summary>Thiết lập nguồn (chỉ làm một lần)</summary><div class="transfer-source-settings-inner"><p class="note">Chỉ đọc Sheet luân chuyển gốc; lịch sử gửi được lưu trong dữ liệu WorkHub riêng.</p><input id="transferSourceUrl" placeholder="Link Google Sheets / Excel trên Drive" value="${esc(url)}"><div class="flex"><button type="button" class="small" data-action="transfer-link">Liên kết nguồn</button><button type="button" class="small" data-action="transfer-source-auth">Cấp quyền đọc Excel Drive</button></div><details><summary>Nhập Excel thủ công (dự phòng)</summary><div class="transfer-import"><input id="transferFile" type="file" accept=".xlsx,.xls,.csv"><button type="button" class="small" data-action="transfer-import">Nhập file</button></div></details></div></details></div></section>
+ <div class="transfer-source-line"><span class="transfer-dot ${linked?'active':''}"></span><span>${linked?esc(transferSourceStatus||'Nguồn đã liên kết · tự đọc thay đổi mỗi 30 giây'):'Chưa liên kết Sheet luân chuyển'}</span><button type="button" class="small" data-action="transfer-refresh" ${!linked||transferSourceBusy?'disabled':''}>↻ Cập nhật từ Sheet</button><details class="transfer-source-settings"><summary>Thiết lập nguồn (chỉ làm một lần)</summary><div class="transfer-source-settings-inner"><p class="note">Google Sheet nguồn: đọc/ghi hai chiều cột K (Số lượng gửi). Cột L (thực nhận) giữ nguyên. File Excel trên Drive chỉ hỗ trợ đọc.</p><input id="transferSourceUrl" placeholder="Link Google Sheets / Excel trên Drive" value="${esc(url)}"><div class="flex"><button type="button" class="small" data-action="transfer-link">Liên kết nguồn</button><button type="button" class="small" data-action="transfer-source-auth">Cấp quyền đọc Excel Drive</button></div><details><summary>Nhập Excel thủ công (dự phòng)</summary><div class="transfer-import"><input id="transferFile" type="file" accept=".xlsx,.xls,.csv"><button type="button" class="small" data-action="transfer-import">Nhập file</button></div></details></div></details></div></section>
  ${!(data.transfers||[]).length?'<section class="panel"><div class="empty">Chưa có phiếu đề xuất. Hãy liên kết Sheet luân chuyển ở phần Thiết lập nguồn.</div></section>':`
  <section class="panel transfer-prepare"><div class="transfer-section-heading"><div><span class="panel-eyebrow">PHIẾU ĐANG SOẠN</span><h2>${esc(transferFrom)} → ${esc(transferTo)}</h2><p class="note">${esc(viDate(transferRequestDate))} · ${esc(ref)}</p></div><button type="button" class="primary" data-action="transfer-pdf">${whIcon('download',17)} In phiếu soạn</button></div>
  ${wh575StockNotice()}<div class="transfer-three-numbers"><div><small>Đề xuất</small><b>${number(prop)} SP</b></div><div><small>Đã gửi</small><b>${number(sent)} SP</b></div><div><small>Còn chờ</small><b>${number(Math.max(0,prop-sent))} SP</b></div></div>
  
  <div class="transfer-prep-heading"><h3>Mã hàng cần soạn <span class="muted">(${number(batch.length)} dòng)</span></h3><label>Ngày thực gửi <input id="transferDispatchDate" type="date" value="${esc(transferDispatchDate)}"></label></div>
- <div class="tablewrap transfer-prep-wrap"><table class="transfer-prep-table"><thead><tr><th>Mã / Size</th><th>Sản phẩm</th><th>SL đề xuất</th><th>Khả dụng HT kho xuất</th><th>Thực gửi</th></tr></thead><tbody>${batch.map(x=>{const m=transferResolved(x),num=transferTrackPending(x),value=transferDrafts.get(x.id)||'',duplicated=duplicateKeys.has(transferDuplicateKey(x));return `<tr class="${duplicated?'transfer-duplicate':''}"><td><b>${esc(x.code)}</b>${duplicated?'<small class="transfer-duplicate-label">⚠ Mã / size trùng trong phiếu</small>':''}<small>Size ${esc(x.size)}</small><small>${esc(m.chosen?.sku||x.sourceSku||'')}</small></td><td><b>${esc(m.chosen?.product||x.product||'Sản phẩm chưa rõ')}</b><small>${esc(x.variantHint||'')}</small>${m.choices.length>1?`<label class="transfer-ambiguous">Chọn SKU đúng<select data-transfer-sku="${esc(x.id)}"><option value="">Chưa chọn (${m.choices.length} SKU)</option>${transferOpt(m.choices.map(y=>y.sku),x.resolvedSku||'')}</select></label>`:''}</td><td class="transfer-number">${number(x.proposed)}${num<x.proposed?`<small>Còn chờ ${number(num)}</small>`:''}</td><td class="transfer-number">${m.available===null?'<span class="transfer-unmatched" title="'+esc(m.status)+'">'+esc(m.status)+'</span>':number(m.available)}</td><td><input type="number" min="0" step="1" inputmode="numeric" data-transfer-draft="${esc(x.id)}" value="${esc(value)}" placeholder="Để trống" aria-label="Thực gửi ${esc(x.code)} size ${esc(x.size)}"></td></tr>`}).join('')}</tbody></table></div>
+ <div class="tablewrap transfer-prep-wrap"><table class="transfer-prep-table"><thead><tr><th>Mã / Size</th><th>Sản phẩm</th><th>SL đề xuất</th><th>Khả dụng HT kho xuất</th><th>Thực gửi</th></tr></thead><tbody>${batch.map(x=>{const m=transferResolved(x),num=transferTrackPending(x),value=transferDrafts.has(x.id)?transferDrafts.get(x.id):(transferSourceIsSheet()?String(transferInt(x.sourceSent)):''),duplicated=duplicateKeys.has(transferDuplicateKey(x));return `<tr class="${duplicated?'transfer-duplicate':''}"><td><b>${esc(x.code)}</b>${duplicated?'<small class="transfer-duplicate-label">⚠ Mã / size trùng trong phiếu</small>':''}<small>Size ${esc(x.size)}</small><small>${esc(m.chosen?.sku||x.sourceSku||'')}</small></td><td><b>${esc(m.chosen?.product||x.product||'Sản phẩm chưa rõ')}</b><small>${esc(x.variantHint||'')}</small>${m.choices.length>1?`<label class="transfer-ambiguous">Chọn SKU đúng<select data-transfer-sku="${esc(x.id)}"><option value="">Chưa chọn (${m.choices.length} SKU)</option>${transferOpt(m.choices.map(y=>y.sku),x.resolvedSku||'')}</select></label>`:''}</td><td class="transfer-number">${number(x.proposed)}${num<x.proposed?`<small>Còn chờ ${number(num)}</small>`:''}</td><td class="transfer-number">${m.available===null?'<span class="transfer-unmatched" title="'+esc(m.status)+'">'+esc(m.status)+'</span>':number(m.available)}</td><td><input type="number" min="0" step="1" inputmode="numeric" data-transfer-draft="${esc(x.id)}" value="${esc(value)}" placeholder="0" aria-label="Thực gửi ${esc(x.code)} size ${esc(x.size)}"></td></tr>`}).join('')}</tbody></table></div>
  <div class="transfer-batch-evidence"><div class="transfer-evidence-heading"><div><span class="transfer-label-icon">${whIcon('count',18)}</span><div><h3>Ảnh phiếu của đợt</h3><p>Chụp các trang đã điền · Không cần nhập Thực gửi</p></div></div><span class="transfer-count-bubble">${number(transferBatchPhotos(batch).length)} ảnh đã lưu</span></div>
  ${transferPhotoThumbs(transferBatchPhotos(batch))}
  <div class="transfer-evidence-controls"><label class="transfer-photo-choose">${whIcon('plus',16)} Chọn ảnh<input type="file" id="transferPrepPhotoInput" accept="image/*" multiple aria-label="Chọn nhiều ảnh phiếu giấy của cùng một đợt"></label><small id="transferPrepSelection">${transferPrepPhotos.length?transferPrepPhotos.length+' ảnh chờ tải':'Có thể chọn nhiều trang cùng lúc'}</small>${transferPrepPhotos.length?'<button type="button" class="small" data-action="transfer-photo-clear">Bỏ chọn</button>':''}<button type="button" class="primary" data-action="transfer-photo-batch" ${transferPhotoUploading?'disabled':''}>${whIcon('cloud',17)} Lưu ảnh lên Drive</button></div>
  <small id="transferPhotoState" class="transfer-photo-state" role="status">${esc(transferPhotoProgress||'Ảnh được lưu riêng theo đợt đề xuất, không làm thay đổi số lượng hàng.')}</small></div>
-  <div class="transfer-savebar"><span class="note">Chỉ nhập Thực gửi khi đã đóng hàng.</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving?'disabled':''}>${whIcon('check',17)} Lưu số thực gửi</button></div></section>`}
+  <div class="transfer-savebar"><span class="note">${transferSourceIsSheet()?'Sửa số hiện tại → Google Sheet cột K. Không cộng dồn.':'Chỉ nhập Thực gửi khi đã đóng hàng.'}</span><button type="button" class="primary" data-action="transfer-send" ${transferSaving?'disabled':''}>${whIcon('check',17)} Lưu số thực gửi</button></div></section>`}
 </div>`;
 }
 
@@ -2465,7 +2474,81 @@ async function transferCommitImport(rows,stats,filename,opts={}){
  transferSourceStatus='Cập nhật '+new Date().toLocaleString('vi-VN');if(!opts.silent){transferFrom='__init';transferTo='__init';transferRequestDate='__init';transferBatch='__init'}transferDrafts.clear();if(page==='transfers')render();
  if(!opts.silent)toast('Đã cập nhật '+changed+' dòng từ '+filename+'. Lịch sử gửi hàng được giữ nguyên.');return true;
 }
+// Đồng bộ hai chiều với GOOGLE SHEET NGUỒN – chỉ cột K: "Số lượng gửi".
+// Không sửa cột L: "Số lượng thực nhận". Mỗi mã/size trùng được đối chiếu THEO TỪNG DÒNG.
+async function transferWriteSourceSent(updates){
+ if(!transferSourceIsSheet())throw new Error('Nguồn hiện tại không phải Google Sheet. Không thể ghi vào file Excel Drive; hãy liên kết Google Sheets gốc.');
+ if(!cloudIsConnected())throw new Error('Phiên Google chưa kết nối. Đăng nhập Google để ghi số gửi hai chiều.');
+ const sourceId=data.settings.transferSourceSheetId||data.settings.transferSourceId;
+ const base='https://sheets.googleapis.com/v4/spreadsheets/'+encodeURIComponent(sourceId);
+ const raw=await cloudJson(base+'/values/'+encodeURIComponent("'Luân chuyển hàng'!A1:Q10000")+'?valueRenderOption=UNFORMATTED_VALUE');
+ const list=transferImportRows(raw.values||[]).rows;
+ const byId=new Map(list.map(r=>[r.id,r]));
+ const stable=x=>[x.batch,x.date,stockKey(x.from),stockKey(x.to),x.code,stockKey(x.size),String(x.sourceSku||'').trim()].join('|');
+ const groups=new Map();for(const r of list){const k=stable(r);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(r)}
+ const targets=[],used=new Set();
+ for(const {x,qty} of updates){
+  let target=byId.get(x.id);
+  if(!target){const matches=groups.get(stable(x))||[];if(matches.length===1)target=matches[0]}
+  if(!target||!target.sourceRow)throw new Error('Không xác định được đúng dòng nguồn của '+x.code+'/'+x.size+'. Hãy bấm “Cập nhật từ Sheet” rồi thử lại.');
+  if(used.has(target.sourceRow))throw new Error('Nhiều dòng đang trỏ vào dòng '+target.sourceRow+' trên nguồn. Dừng để tránh ghi sai mã trùng.');
+  if(x.sourceRow&&Number(x.sourceRow)!==Number(target.sourceRow))throw new Error('Dòng '+x.code+'/'+x.size+' đã di chuyển từ dòng '+x.sourceRow+' sang '+target.sourceRow+'. Bấm Cập nhật từ Sheet rồi thử lại.');
+  if(transferInt(x.sourceSent)!==transferInt(target.sourceSent))throw new Error('Số gửi '+x.code+'/'+x.size+' vừa đổi trên Google Sheets ('+x.sourceSent+' → '+target.sourceSent+'). Hãy bấm Cập nhật từ Sheet rồi lưu lại để tránh ghi đè dữ liệu mới.');
+  used.add(target.sourceRow);
+  if(target.batch!==x.batch||target.date!==x.date||stockKey(target.from)!==stockKey(x.from)||stockKey(target.to)!==stockKey(x.to)||target.code!==x.code||stockKey(target.size)!==stockKey(x.size))throw new Error('Nguồn đã đổi vị trí dòng '+x.code+'/'+x.size+'. Hãy cập nhật trước khi lưu.');
+  targets.push({x,qty,row:target.sourceRow,previous:target.sourceSent});
+ }
+ // Không ghi đè lên công thức nguồn.
+ const formula=await cloudJson(base+'/values:batchGet?ranges='+targets.map(t=>encodeURIComponent("'Luân chuyển hàng'!K"+t.row)).join('&ranges=')+'&valueRenderOption=FORMULA');
+ for(let i=0;i<targets.length;i++){
+  const v=String(formula.valueRanges?.[i]?.values?.[0]?.[0]??'');
+  if(v.startsWith('='))throw new Error('Ô K'+targets[i].row+' đang là công thức. Không tự ghi đè công thức trong Google Sheet.');
+ }
+ const payloadUpdates=targets.map(t=>({range:"'Luân chuyển hàng'!K"+t.row,majorDimension:'ROWS',values:[[t.qty]]}));
+ try{await cloudJson(base+'/values:batchUpdate','POST',{valueInputOption:'RAW',data:payloadUpdates});}
+ catch(e){if(/Google API 403/.test(e.message))throw new Error('Bạn đang có quyền xem nhưng chưa có quyền chỉnh sửa Sheet luân chuyển nguồn. Hãy xin quyền Editor. '+e.message);throw e}
+ const verify=await cloudJson(base+'/values:batchGet?ranges='+targets.map(t=>encodeURIComponent("'Luân chuyển hàng'!K"+t.row)).join('&ranges=')+'&valueRenderOption=UNFORMATTED_VALUE');
+ for(let i=0;i<targets.length;i++){
+  if(transferInt(verify.valueRanges?.[i]?.values?.[0]?.[0])!==targets[i].qty)throw new Error('Chưa xác nhận được ô K'+targets[i].row+' trên Sheet. Bấm cập nhật nguồn trước khi thử ghi lại.');
+ }
+ return targets;
+}
+async function transferSaveSyncedSource(){
+ if(transferSaving)return;
+ if(!transferDrafts.size){toast('Số thực gửi đã hiển thị đúng theo Google Sheet; không có thay đổi cần lưu.');return}
+ const all=new Map((data.transfers||[]).map(x=>[x.id,x])),updates=[];
+ for(const [id,raw] of transferDrafts){
+  const x=all.get(id);if(!x)throw new Error('Dòng luân chuyển không còn tồn tại: '+id);
+  if(raw===''||!/^[0-9]+$/.test(String(raw)))throw new Error('Nhập số nguyên không âm cho '+x.code+'/'+x.size);
+  const qty=Number(raw);if(!Number.isSafeInteger(qty)||qty<0)throw new Error('Số gửi không hợp lệ '+x.code+'/'+x.size);
+  if(qty===transferInt(x.sourceSent))continue;
+  updates.push({x,qty});
+ }
+ if(!updates.length){transferDrafts.clear();toast('Không có thay đổi số thực gửi.');if(page==='transfers')render();return}
+ if(!confirm('Cập nhật '+updates.length+' dòng Số lượng gửi trên Google Sheet nguồn (cột K)?\nSố mới sẽ THAY THẾ số cũ, không cộng dồn.'))return;
+ transferSaving=true;
+ try{
+  // GHI THÀNH CÔNG TRÊN NGUỒN TRƯỚC, sau đó mới cập nhật cache WorkHub.
+  const confirmed=await transferWriteSourceSent(updates);
+  const stamp=new Date().toISOString();
+  for(const t of confirmed){t.x.sourceSent=t.qty;t.x.updatedAt=stamp;t.x.sourceRow=t.row}
+  transferDrafts.clear();
+  try{
+   await persist('transfers');
+   if(cloudIsReady()){
+    await cloudFlush();
+    if(cloudDirty.has('transfers'))throw new Error('Sheet nguồn đã lưu; Sheet lưu trữ WorkHub còn đang chờ đồng bộ.');
+   }
+   transferSourceStatus='Đã lưu hai chiều lúc '+new Date().toLocaleTimeString('vi-VN');
+   toast('Đã cập nhật '+confirmed.length+' dòng lên Google Sheet nguồn và WorkHub.');
+  }catch(err){
+   transferSourceStatus='Đã sửa Sheet nguồn, WorkHub chưa xác nhận đồng bộ';
+   toast('Sheet nguồn đã lưu; WorkHub còn chờ: '+err.message,true);
+  }
+ }finally{transferSaving=false;transferLastPoll=0;if(page==='transfers')render()}
+}
 async function transferRecordDispatch(){
+ if(transferSourceIsSheet()){await transferSaveSyncedSource();return;}
  if(transferSaving)return;
  const batch=transferBatchRows();if(!batch.length)throw new Error('Hãy chọn phiếu đề xuất trước.');
  if(!/^\d{4}-\d{2}-\d{2}$/.test(transferDispatchDate||''))throw new Error('Ngày thực gửi chưa hợp lệ.');
@@ -2543,7 +2626,7 @@ function transferSourceRowsFromXlsx(buf){if(!window.XLSX)throw new Error('Chưa 
 async function transferSyncSource(opts={}){
  const sourceId=data.settings.transferSourceId||data.settings.transferSourceSheetId;if(!sourceId||transferSourceBusy||transferAutoBusy)return false;
  if(!cloudIsConnected()){if(!opts.silent)throw new Error('Kết nối Google trước để đọc nguồn.');return false;}
- if(cloudSyncBusy||transferPendingEdits||cloudDirty.has('transfers')){transferSourceStatus='Đang chờ đồng bộ xong mới kiểm tra nguồn';return false}
+ if(cloudSyncBusy||transferPendingEdits||transferSaving||transferDrafts.size||cloudDirty.has('transfers')){transferSourceStatus='Đang nhập hoặc đồng bộ; sẽ đọc nguồn sau khi lưu';return false}
  transferAutoBusy=true;transferSourceBusy=true;
  try{
   const kind=data.settings.transferSourceKind||(data.settings.transferSourceSheetId?'sheet':'drive');let rows=[],stamp='';
@@ -2564,7 +2647,7 @@ async function transferSyncSource(opts={}){
   const result=transferImportRows(rows);
   const changed=await transferCommitImport(result.rows,result.skipped,kind==='sheet'?'Google Sheets nguồn':'Excel nguồn Drive',{silent:true});
   if(stamp){data.settings.transferSourceStamp=stamp;await dbSet('settings',data.settings)}
-  transferSourceStatus=(changed?'Đã nhận đề xuất mới':'Không có thay đổi')+' · '+new Date().toLocaleTimeString('vi-VN');
+  transferSourceStatus=(changed?'Đã đồng bộ đề xuất / số gửi':'Không có thay đổi')+' · '+new Date().toLocaleTimeString('vi-VN');
   if(changed)toast('Luân chuyển: Đã cập nhật đề xuất từ nguồn Google. Lịch sử gửi được giữ nguyên.');if(page==='transfers')render();return changed;
  }catch(e){transferSourceStatus='Lỗi cập nhật nguồn: '+e.message;if(!opts.silent)throw e;console.warn('[Transfer source]',e);if(page==='transfers')render();return false}
  finally{transferSourceBusy=false;transferAutoBusy=false;transferLastPoll=Date.now()}
@@ -2653,7 +2736,7 @@ async function transferPdf(dispatchOnly=false){
  }
 }
 
-function transferCsv(){const rows=transferBatchRows();if(!rows.length)throw new Error('Không có phiếu để xuất');const headers=['Mã phiếu tự tạo','Ngày đề xuất','Kho xuất','Kho nhận','Mã 4 số','Size','SKU','Sản phẩm','SL đề xuất','Khả dụng HT kho xuất','Đã gửi WorkHub','SL gửi trên file nguồn','Còn chờ','Chi tiết lần gửi'];const body=rows.map(x=>{const s=transferResolved(x);return [transferAutoNumber(x),x.date,x.from,x.to,x.code,x.size,s.chosen?.sku||'',s.chosen?.product||x.product,x.proposed,s.available??'',transferSentTotal(x),x.sourceSent||0,transferPending(x),transferEntriesWithLegacy(x).map(e=>e.date+': '+e.qty+(e.ref?' ('+e.ref+')':'')).join('; ')]});body.push(['TỔNG ĐỀ XUẤT','','','','','','','',rows.reduce((n,x)=>n+transferInt(x.proposed),0),'','','','','']);const escCsv=x=>{let s=String(x??'');if(/^[=+@-]/.test(s.trimStart()))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};download('\uFEFF'+[headers,...body].map(r=>r.map(escCsv).join(',')).join('\r\n'),'WorkHub_LuanChuyen_'+today()+'.csv','text/csv;charset=utf-8')}
+function transferCsv(){const rows=transferBatchRows();if(!rows.length)throw new Error('Không có phiếu để xuất');const headers=['Mã phiếu tự tạo','Ngày đề xuất','Kho xuất','Kho nhận','Mã 4 số','Size','SKU','Sản phẩm','SL đề xuất','Khả dụng HT kho xuất','Thực gửi hiện tại','SL gửi trên file nguồn','Còn chờ','Chi tiết lần gửi'];const body=rows.map(x=>{const s=transferResolved(x);return [transferAutoNumber(x),x.date,x.from,x.to,x.code,x.size,s.chosen?.sku||'',s.chosen?.product||x.product,x.proposed,s.available??'',transferTrackSent(x),x.sourceSent||0,transferTrackPending(x),transferEntriesWithLegacy(x).map(e=>e.date+': '+e.qty+(e.ref?' ('+e.ref+')':'')).join('; ')]});body.push(['TỔNG ĐỀ XUẤT','','','','','','','',rows.reduce((n,x)=>n+transferInt(x.proposed),0),'','','','','']);const escCsv=x=>{let s=String(x??'');if(/^[=+@-]/.test(s.trimStart()))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};download('\uFEFF'+[headers,...body].map(r=>r.map(escCsv).join(',')).join('\r\n'),'WorkHub_LuanChuyen_'+today()+'.csv','text/csv;charset=utf-8')}
 function transferOnInput(e){const t=e.target;
  if(['transferFrom','transferTo','transferRequestDate','transferBatch','transferHistoryMode'].includes(t.id)){
   if(['transferFrom','transferTo','transferRequestDate','transferBatch'].includes(t.id)&&transferPrepPhotos.length){transferPrepPhotos=[];transferPrepBatchKey='';toast('Đã bỏ chọn ảnh chờ tải khi đổi đợt đề xuất.')}
@@ -2891,7 +2974,7 @@ async function chipSave(){if(chipState.saving||chipState.loading)return;if(!chip
 }
 
 function render(){if(!titles[page])page='dashboard';applyUi();const t=titles[page];$('pageTitle').textContent=t[0];$('pageSub').textContent=t[1];const add=$('quickAdd');add.classList.toggle('hidden',page!=='dashboard');add.hidden=page!=='dashboard';buttons();$('profileName').textContent=data.settings.name||'Tài khoản cá nhân';$('profileEmail').textContent=data.settings.email||'Lưu trên thiết bị này';$('avatar').textContent=(data.settings.name||'T').trim()[0].toUpperCase();let view=page==='dashboard'?renderDashboard():page==='tasks'?renderRecords('tasks'):page==='stock'?renderStock():page==='count'?renderCount():page==='returns'?renderReturns():page==='transfers'?renderTransfers():page==='mistakes'?renderRecords('mistakes'):page==='reports'?renderReports():page==='chip'?renderChip():renderSettings();$('content').innerHTML=view;if(page==='stock')renderStockRows();refreshCloudBanner();reminderRender()}
-function go(p){if(page==='chip'&&p!=='chip'&&chipHasDraft()&&!confirm('Các số liệu Đinh & Chip chưa lưu lên Google Sheet. Tạm rời tab?'))return;if(page==='transfers'&&p!=='transfers'&&(transferPendingEdits||transferPrepPhotos.length||transferArchivePhotos.length||transferPhotoUploading)){if(!confirm('Có số lượng hoặc ảnh phiếu chưa hoàn tất. Rời tab sẽ giữ lựa chọn trong phiên, nhưng ảnh chưa được bảo đảm đã lên Drive. Tiếp tục?'))return;}if(!titles[p]||['partners','operations'].includes(p))return;if(page==='returns'&&p!=='returns'){if((videoBlob||recorder?.state==='recording')&&!confirm('Video hàng hoàn chưa được lưu. Rời trang sẽ mất video trên thiết bị. Tiếp tục?'))return;stopCamera();releaseVideo()}$('moreMenu')?.classList.add('hidden');page=p;render();window.scrollTo({top:0,behavior:'instant'});if(p==='stock')$('stockSearch')?.focus();if(p==='transfers')transferAutoCheck().catch(console.warn);if(p==='chip'&&chipSheetId()&&cloudIsConnected()&&!chipState.loaded&&!chipState.loading)chipRefresh().catch(console.warn);if(p==='reports'&&reportSection==='warehouse'&&getWarehouseId()&&cloudIsConnected()&&!warehouseReport.loaded&&!warehouseReport.loading)whLoadSource().catch(e=>toast(e.message,true))}
+function go(p){if(page==='chip'&&p!=='chip'&&chipHasDraft()&&!confirm('Các số liệu Đinh & Chip chưa lưu lên Google Sheet. Tạm rời tab?'))return;if(page==='transfers'&&p!=='transfers'&&(transferPendingEdits||transferPrepPhotos.length||transferArchivePhotos.length||transferPhotoUploading)){if(!confirm('Có số lượng hoặc ảnh phiếu chưa hoàn tất. Rời tab sẽ giữ lựa chọn trong phiên, nhưng ảnh chưa được bảo đảm đã lên Drive. Tiếp tục?'))return;}if(!titles[p]||['partners','operations'].includes(p))return;if(page==='returns'&&p!=='returns'){if((videoBlob||recorder?.state==='recording')&&!confirm('Video hàng hoàn chưa được lưu. Rời trang sẽ mất video trên thiết bị. Tiếp tục?'))return;stopCamera();releaseVideo()}$('moreMenu')?.classList.add('hidden');page=p;render();window.scrollTo({top:0,behavior:'instant'});if(p==='stock')$('stockSearch')?.focus();if(p==='transfers')transferAutoCheck(true).catch(console.warn);if(p==='chip'&&chipSheetId()&&cloudIsConnected()&&!chipState.loaded&&!chipState.loading)chipRefresh().catch(console.warn);if(p==='reports'&&reportSection==='warehouse'&&getWarehouseId()&&cloudIsConnected()&&!warehouseReport.loaded&&!warehouseReport.loading)whLoadSource().catch(e=>toast(e.message,true))}
 function modalField([key,label,type,required,choices],row){
  let value=row?.[key]??(type==='date'&&key==='date'?today():'');
  if(!row&&key==='followup'&&today()<=REMINDER_INITIAL_DATE)value=REMINDER_INITIAL_DATE;
